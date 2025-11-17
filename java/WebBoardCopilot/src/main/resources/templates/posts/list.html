@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판 - WebBoard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        header {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-content h1 {
+            font-size: 1.8em;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .header-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .content-header h2 {
+            color: #333;
+        }
+        
+        .btn-create {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .btn-create:hover {
+            background: #5568d3;
+        }
+        
+        .post-table {
+            background: white;
+            border-collapse: collapse;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .post-table thead {
+            background: #f9f9f9;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .post-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .post-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .post-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .post-title {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .post-title:hover {
+            text-decoration: underline;
+        }
+        
+        .post-meta {
+            color: #999;
+            font-size: 0.9em;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .pagination a, .pagination span {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination a:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .pagination .active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3c3;
+        }
+        
+        .no-posts {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            background: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>📝 WebBoard</h1>
+            <div class="header-nav">
+                <a href="/" th:if="!${#authentication.principal}">홈</a>
+                <a href="/posts" th:if="${#authentication.principal}">게시판</a>
+                <span th:if="${#authentication.principal}" style="color: #ddd;">|</span>
+                <a href="/auth/logout" th:if="${#authentication.principal}">로그아웃</a>
+                <a href="/auth/login" th:unless="${#authentication.principal}">로그인</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div th:if="${message}" class="message" th:text="${message}"></div>
+        
+        <div class="content-header">
+            <h2>게시판</h2>
+            <a href="/posts/create" class="btn-create" th:if="${#authentication.principal}">+ 새 글 작성</a>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(posts)}" class="no-posts">
+            <p>작성된 게시글이 없습니다.</p>
+        </div>
+        
+        <table class="post-table" th:unless="${#lists.isEmpty(posts)}">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">번호</th>
+                    <th style="width: 50%;">제목</th>
+                    <th style="width: 15%;">작성자</th>
+                    <th style="width: 15%;">작성일</th>
+                    <th style="width: 10%;">조회</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="post, stat : ${posts}">
+                    <td th:text="${totalCount - (currentPage - 1) * 10 - stat.index}"></td>
+                    <td><a th:href="@{/posts/{id}(id=${post.id})}" class="post-title" th:text="${post.title}"></a></td>
+                    <td class="post-meta" th:text="${post.author != null ? post.author.username : 'Unknown'}"></td>
+                    <td class="post-meta" th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${post.viewCount}"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="pagination" th:if="${totalPages > 1}">
+            <a th:href="@{/posts(page=1)}" th:if="${currentPage > 1}">« 처음</a>
+            <a th:href="@{/posts(page=${currentPage - 1})}" th:if="${currentPage > 1}">‹ 이전</a>
+            
+            <span th:each="page : ${#numbers.sequence(1, totalPages)}"
+                  th:class="${page == currentPage ? 'active' : ''}">
+                <a th:if="${page != currentPage}" th:href="@{/posts(page=${page})}" th:text="${page}"></a>
+                <span th:if="${page == currentPage}" th:text="${page}"></span>
+            </span>
+            
+            <a th:href="@{/posts(page=${currentPage + 1})}" th:if="${currentPage < totalPages}">다음 ›</a>
+            <a th:href="@{/posts(page=${totalPages})}" th:if="${currentPage < totalPages}">끝 »</a>
+        </div>
+    </div>
+</body>
+</html>

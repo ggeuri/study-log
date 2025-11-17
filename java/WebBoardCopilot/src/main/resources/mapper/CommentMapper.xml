@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.webboard.mapper.CommentMapper">
+    
+    <insert id="insert" parameterType="Comment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO comments (post_id, author_id, parent_id, content, is_deleted, created_at, updated_at)
+        VALUES (#{postId}, #{authorId}, #{parentId}, #{content}, 0, NOW(), NOW())
+    </insert>
+    
+    <select id="selectById" parameterType="long" resultType="Comment">
+        SELECT id, post_id as postId, author_id as authorId, parent_id as parentId, 
+               content, is_deleted as isDeleted, created_at as createdAt, updated_at as updatedAt
+        FROM comments
+        WHERE id = #{id}
+    </select>
+    
+    <select id="selectByIdWithAuthor" parameterType="long" resultMap="commentWithAuthor">
+        SELECT c.id, c.post_id, c.author_id, c.parent_id, c.content, c.is_deleted, 
+               c.created_at, c.updated_at,
+               u.id as user_id, u.email, u.username, u.role, u.status, 
+               u.last_login_at, u.created_at as user_created_at, u.updated_at as user_updated_at
+        FROM comments c
+        LEFT JOIN users u ON c.author_id = u.id
+        WHERE c.id = #{id}
+    </select>
+    
+    <select id="selectByPostId" parameterType="long" resultType="Comment">
+        SELECT id, post_id as postId, author_id as authorId, parent_id as parentId, 
+               content, is_deleted as isDeleted, created_at as createdAt, updated_at as updatedAt
+        FROM comments
+        WHERE post_id = #{postId}
+        ORDER BY created_at ASC
+    </select>
+    
+    <select id="selectByPostIdActive" parameterType="long" resultType="Comment">
+        SELECT id, post_id as postId, author_id as authorId, parent_id as parentId, 
+               content, is_deleted as isDeleted, created_at as createdAt, updated_at as updatedAt
+        FROM comments
+        WHERE post_id = #{postId} AND is_deleted = 0
+        ORDER BY created_at ASC
+    </select>
+    
+    <select id="selectByParentId" parameterType="long" resultType="Comment">
+        SELECT id, post_id as postId, author_id as authorId, parent_id as parentId, 
+               content, is_deleted as isDeleted, created_at as createdAt, updated_at as updatedAt
+        FROM comments
+        WHERE parent_id = #{parentId} AND is_deleted = 0
+        ORDER BY created_at ASC
+    </select>
+    
+    <select id="selectByAuthorId" parameterType="long" resultType="Comment">
+        SELECT id, post_id as postId, author_id as authorId, parent_id as parentId, 
+               content, is_deleted as isDeleted, created_at as createdAt, updated_at as updatedAt
+        FROM comments
+        WHERE author_id = #{authorId} AND is_deleted = 0
+        ORDER BY created_at DESC
+    </select>
+    
+    <update id="update" parameterType="Comment">
+        UPDATE comments
+        SET content = #{content}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+    
+    <update id="softDelete" parameterType="long">
+        UPDATE comments
+        SET is_deleted = 1, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+    
+    <select id="countByPostId" parameterType="long" resultType="long">
+        SELECT COUNT(*) FROM comments WHERE post_id = #{postId} AND is_deleted = 0
+    </select>
+    
+    <resultMap id="commentWithAuthor" type="Comment">
+        <id column="id" property="id"/>
+        <result column="post_id" property="postId"/>
+        <result column="author_id" property="authorId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="content" property="content"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <association property="author" javaType="User">
+            <id column="user_id" property="id"/>
+            <result column="email" property="email"/>
+            <result column="username" property="username"/>
+            <result column="role" property="role"/>
+            <result column="status" property="status"/>
+            <result column="last_login_at" property="lastLoginAt"/>
+            <result column="user_created_at" property="createdAt"/>
+            <result column="user_updated_at" property="updatedAt"/>
+        </association>
+    </resultMap>
+    
+</mapper>

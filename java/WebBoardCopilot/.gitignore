@@ -1,0 +1,29 @@
+# Gradle
+.gradle
+build/
+out/
+*.class
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Log
+*.log
+
+# Misc
+.classpath
+.project
+.settings/
+.history/
+node_modules/
+dist/

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 수정 - WebBoard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        header {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-content h1 {
+            font-size: 1.8em;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .header-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-container h2 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1em;
+        }
+        
+        textarea {
+            min-height: 400px;
+            resize: vertical;
+        }
+        
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        button,
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .btn-submit {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-submit:hover {
+            background: #5568d3;
+        }
+        
+        .btn-cancel {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-cancel:hover {
+            background: #ddd;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c33;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>📝 WebBoard</h1>
+            <div class="header-nav">
+                <a href="/posts">게시판</a>
+                <span style="color: #ddd;">|</span>
+                <a href="/auth/logout">로그아웃</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+        
+        <div class="form-container">
+            <h2>게시글 수정</h2>
+            
+            <form method="post" th:action="@{/posts/{id}(id=${post.id})}">
+                <input type="hidden" name="_method" value="PUT">
+                
+                <div class="form-group">
+                    <label for="title">제목</label>
+                    <input type="text" id="title" name="title" th:value="${postRequest.title}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">내용</label>
+                    <textarea id="content" name="content" required th:text="${postRequest.content}"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">수정하기</button>
+                    <a th:href="@{/posts/{id}(id=${post.id})}" class="btn btn-cancel">취소</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

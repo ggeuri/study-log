@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 상세 - WebBoard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        header {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-content h1 {
+            font-size: 1.8em;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .header-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .post-header {
+            background: white;
+            padding: 30px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .post-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .post-meta {
+            display: flex;
+            gap: 30px;
+            font-size: 0.9em;
+            color: #999;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .post-content {
+            background: white;
+            padding: 30px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            line-height: 1.8;
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #5568d3;
+        }
+        
+        .btn-delete {
+            background: #f0f0f0;
+            color: #c33;
+            border: 1px solid #c33;
+        }
+        
+        .btn-delete:hover {
+            background: #c33;
+            color: white;
+        }
+        
+        .btn-back {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-back:hover {
+            background: #ddd;
+        }
+        
+        .message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3c3;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c33;
+        }
+        
+        .comments-section {
+            background: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comments-section h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .comment-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        .comment-btn {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .comment-btn:hover {
+            background: #5568d3;
+        }
+        
+        .comment {
+            border-left: 3px solid #667eea;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .comment-date {
+            color: #999;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        
+        .comment-content {
+            margin-top: 10px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .comment-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .comment-actions a {
+            font-size: 0.9em;
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .comment-actions a:hover {
+            text-decoration: underline;
+        }
+        
+        .no-comments {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>📝 WebBoard</h1>
+            <div class="header-nav">
+                <a href="/" th:if="!${#authentication.principal}">홈</a>
+                <a href="/posts" th:if="${#authentication.principal}">게시판</a>
+                <span th:if="${#authentication.principal}" style="color: #ddd;">|</span>
+                <a href="/auth/logout" th:if="${#authentication.principal}">로그아웃</a>
+                <a href="/auth/login" th:unless="${#authentication.principal}">로그인</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div th:if="${message}" class="message" th:text="${message}"></div>
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+        
+        <div class="post-header">
+            <h2 class="post-title" th:text="${post.title}"></h2>
+            <div class="post-meta">
+                <span th:text="'작성자: ' + (${post.author != null ? post.author.username : 'Unknown'})"></span>
+                <span th:text="'작성일: ' + ${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                <span th:text="'조회: ' + ${post.viewCount}"></span>
+            </div>
+            
+            <div class="post-actions" th:if="${#authentication.principal != null && #authentication.principal.username == post.author?.username}">
+                <a th:href="@{/posts/{id}/edit(id=${post.id})}" class="btn btn-edit">수정</a>
+                <form method="post" th:action="@{/posts/{id}(id=${post.id})}" style="display: inline;">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn btn-delete" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="post-content" th:text="${post.content}"></div>
+        
+        <div class="comments-section">
+            <h3>댓글 (<span th:text="${#lists.size(comments)}"></span>)</h3>
+            
+            <div class="comment-form" th:if="${#authentication.principal}">
+                <form method="post" th:action="@{/posts/{postId}/comments(postId=${post.id})}">
+                    <div class="form-group">
+                        <label for="content">댓글 작성</label>
+                        <textarea id="content" name="content" required></textarea>
+                    </div>
+                    <button type="submit" class="comment-btn">댓글 등록</button>
+                </form>
+            </div>
+            
+            <div th:if="${#lists.isEmpty(comments)}" class="no-comments">
+                <p>댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</p>
+            </div>
+            
+            <div th:unless="${#lists.isEmpty(comments)}">
+                <div class="comment" th:each="comment : ${comments}">
+                    <div>
+                        <span class="comment-author" th:text="${comment.author != null ? comment.author.username : 'Unknown'}"></span>
+                        <span class="comment-date" th:text="${#dates.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                    </div>
+                    <div class="comment-content" th:text="${comment.content}"></div>
+                    <div class="comment-actions" th:if="${#authentication.principal != null && #authentication.principal.username == comment.author?.username}">
+                        <a href="#" onclick="alert('수정 기능은 추후 구현됩니다.'); return false;">수정</a>
+                        <a href="#" onclick="alert('삭제 기능은 추후 구현됩니다.'); return false;">삭제</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <a href="/posts" class="btn btn-back">← 목록으로</a>
+        </div>
+    </div>
+</body>
+</html>

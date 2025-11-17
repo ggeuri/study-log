@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.webboard.mapper.PostMapper">
+    
+    <insert id="insert" parameterType="Post" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO posts (author_id, title, content, view_count, is_deleted, created_at, updated_at)
+        VALUES (#{authorId}, #{title}, #{content}, 0, 0, NOW(), NOW())
+    </insert>
+    
+    <select id="selectById" parameterType="long" resultType="Post">
+        SELECT id, author_id as authorId, title, content, view_count as viewCount, 
+               is_deleted as isDeleted, created_at as createdAt, updated_at as updatedAt
+        FROM posts
+        WHERE id = #{id}
+    </select>
+    
+    <select id="selectByIdWithAuthor" parameterType="long" resultMap="postWithAuthor">
+        SELECT p.id, p.author_id, p.title, p.content, p.view_count, p.is_deleted, 
+               p.created_at, p.updated_at,
+               u.id as user_id, u.email, u.username, u.role, u.status, 
+               u.last_login_at, u.created_at as user_created_at, u.updated_at as user_updated_at
+        FROM posts p
+        LEFT JOIN users u ON p.author_id = u.id
+        WHERE p.id = #{id}
+    </select>
+    
+    <select id="selectAll" resultType="Post">
+        SELECT id, author_id as authorId, title, content, view_count as viewCount, 
+               is_deleted as isDeleted, created_at as createdAt, updated_at as updatedAt
+        FROM posts
+        ORDER BY created_at DESC
+    </select>
+    
+    <select id="selectAllActive" resultType="Post">
+        SELECT id, author_id as authorId, title, content, view_count as viewCount, 
+               is_deleted as isDeleted, created_at as createdAt, updated_at as updatedAt
+        FROM posts
+        WHERE is_deleted = 0
+        ORDER BY created_at DESC
+    </select>
+    
+    <select id="selectByAuthorId" parameterType="long" resultType="Post">
+        SELECT id, author_id as authorId, title, content, view_count as viewCount, 
+               is_deleted as isDeleted, created_at as createdAt, updated_at as updatedAt
+        FROM posts
+        WHERE author_id = #{authorId} AND is_deleted = 0
+        ORDER BY created_at DESC
+    </select>
+    
+    <select id="selectAllPaginated" resultType="Post">
+        SELECT id, author_id as authorId, title, content, view_count as viewCount, 
+               is_deleted as isDeleted, created_at as createdAt, updated_at as updatedAt
+        FROM posts
+        WHERE is_deleted = 0
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <update id="update" parameterType="Post">
+        UPDATE posts
+        SET title = #{title}, content = #{content}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+    
+    <update id="incrementViewCount" parameterType="long">
+        UPDATE posts
+        SET view_count = view_count + 1
+        WHERE id = #{postId}
+    </update>
+    
+    <update id="softDelete" parameterType="long">
+        UPDATE posts
+        SET is_deleted = 1, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+    
+    <select id="countAll" resultType="long">
+        SELECT COUNT(*) FROM posts
+    </select>
+    
+    <select id="countActive" resultType="long">
+        SELECT COUNT(*) FROM posts WHERE is_deleted = 0
+    </select>
+    
+    <resultMap id="postWithAuthor" type="Post">
+        <id column="id" property="id"/>
+        <result column="author_id" property="authorId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <association property="author" javaType="User">
+            <id column="user_id" property="id"/>
+            <result column="email" property="email"/>
+            <result column="username" property="username"/>
+            <result column="role" property="role"/>
+            <result column="status" property="status"/>
+            <result column="last_login_at" property="lastLoginAt"/>
+            <result column="user_created_at" property="createdAt"/>
+            <result column="user_updated_at" property="updatedAt"/>
+        </association>
+    </resultMap>
+    
+</mapper>
