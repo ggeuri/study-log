@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div{
+            background-color: black; 
+            width: 800px;
+            height: 700px;
+        }
+    </style>
+    <script>
+        let flag = false;
+        function onOff(){
+            // 문서 내 박스라는 id 갖는 배경색을 뒤집자 
+            let box = document.getElementById("box");
+
+            (flag) ? box.style.backgroundColor = "yellow" : box.style.backgroundColor = "black";
+            flag = !flag ; 
+            
+            // if(flag){
+            //     box.style.backgroundColor = "yellow";
+            //     flag = false;
+            // } else {
+            //     box.style.backgroundColor = "black";
+            //     flag = true;
+            // }
+    }
+
+        
+    </script>
+</head>
+<body>
+    
+    <p>
+        <button onclick="onOff()">스위치</button>
+    </p>
+    
+    <div id = "box">영역</div>
+</body>
+</html>

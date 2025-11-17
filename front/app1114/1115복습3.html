@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form class="joinForm">
+    <label>ID    
+        <input type="text" class="userId">
+    </label>
+    
+    <p></p>
+    
+    <label>PW
+        <input type="password" class="userPassword">
+    </label>
+    
+    <p></p>
+
+    <label>Email
+        <input type="text" class="email"> 
+        @
+        <input type="text" class="domain">
+        <select class = "domainSelect">
+            <option value="">이메일 선택</option>
+            <option value="google.com">구글</option>
+            <option value="naver.com">네이버</option>
+            <option value="daum.net">다음</option>
+            <option value="direct">직접 입력</option>
+        </select>
+        <p></p>
+        <button type="submit">가입하기</button>
+
+    </label>
+        
+
+    </form>
+    
+</body>
+
+<script>
+let id = document.querySelector(".userId");  // input 요소
+let pw = document.querySelector(".userPassword"); 
+let email = document.querySelector(".email");
+let domain = document.querySelector(".domain");
+let domainSelect = document.querySelector(".domainSelect");
+
+let form = document.querySelector(".joinForm");
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    if (id.value.trim() === "") {
+        alert("아이디를 입력하세요.");
+        id.focus();          // input에 커서 옮김
+        return;
+    }
+
+    if (pw.value.length < 6) {
+        alert("비밀번호는 6자리 이상이어야 합니다.");
+        pw.focus();
+        return;
+    }
+
+    form.submit();
+});
+
+domainSelect.addEventListener("change", function() {
+    if (domainSelect.value === "direct") {
+        // 직접 입력 모드
+        domain.value = "";
+        domain.readOnly = false;   // 사용자가 입력 가능
+        domain.focus();
+    } else if (domainSelect.value === "") {
+        // "이메일 선택" 기본 상태
+        domain.value = "";
+        domain.readOnly = false;   // 그냥 비워두고 자유 입력 상태
+    } else {
+        // 특정 도메인을 선택한 경우 (gmail.com / naver.com ...)
+        domain.value = domainSelect.value;
+        domain.readOnly = true;    // 수정 못 하게 잠그기 (원하면)
+    }
+    
+});
+
+</script>
+</html>
+
+<!-- ⭐ 문제 3) 회원가입 폼 유효성 검사 만들기
+
+요구사항
+	•	아이디 공백이면 alert
+	•	비밀번호 6자리 미만이면 alert
+	•	email 도메인 select 바꾸면 입력칸 자동 채움
+	•	이벤트는 JS에서 분리 -->

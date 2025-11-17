@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        select{
+            width: 200px;
+            height: 60px;
+            border: 2px solid skyblue;
+            color: white;
+            font-weight: bold;
+        }
+        yy{
+           background-color: aqua; 
+        }
+    </style>
+    <!-- <script>
+        // 문서가 실행되면 yy의 자식으로 option 태그를 동적으로 생성하여 부착
+        let ys = document.getElementById("yy"); // 순서문제였군 이게 먼저실행되면 아직 yy선언되기전임 funtion으로 감싸든지 아래로내리든지 아님 올로드로 하든지 
+        ys.style.background = "yellow"; 
+
+    </script> -->
+</head>
+<body>
+    <select name="" id="yy"><option value="op"></option></select>년
+    <select name="" id="mm"></select>월
+    <select name="" id="dd"></select>일
+
+    <script src = "./lib/util.js"></script> <!--나만의 함수...-->
+    <script>
+        // 문서가 실행되면 yy의 자식으로 option 태그를 동적으로 생성하여 부착
+        let yy = document.getElementById("yy"); // 순서문제였군 이게 먼저실행되면 아직 yy선언되기전임 funtion으로 감싸든지 아래로내리든지 아님 올로드로 하든지 
+
+        {for(let i=2005; i>=1945;i--){
+            let op = document.createElement("option"); 
+            op.text=i;
+            yy.add(op)}
+        }
+        let mm = document.getElementById("mm"); 
+
+        {for(let i=1; i<=12;i++){
+            let op = document.createElement("option"); 
+            op.text=String(i).padStart(2,'0');
+            mm.add(op)}
+        }
+        let dd = document.getElementById("dd"); 
+        
+        {for(let i=1; i<=31;i++){
+            let op = document.createElement("option"); 
+            op.text=String(i).padStart(2,'0');
+            dd.add(op)}
+        }
+
+    </script>
+</body>
+</html>

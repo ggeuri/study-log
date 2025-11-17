@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        span{
+            background-color: yellow;
+            margin-right: 500px; /*마진먹는데..?*/
+            padding-left: 500px; /*패딩도 먹는데?*/
+            display:block; /* 인라인의 속성은 유지하되 block이 갖는 너비,높이 등이 적용될 수 있는 선언 (다른 요소와 공존가능)*/
+            /* height: 50px; */
+            width: 50px;
+        }
+        #span2{
+            background-color: red;
+        }
+        
+    </style>
+
+</head>
+<body>
+    <!-- 스팬태그는 아무론 효과 발생시키지 않음. 그냥 마크업임. 대표적인 inline임. 인라인은 너비,높이,패딩,마진 적용불가 
+     inline 속성 갖는 태그는 웹사이트 레이아웃에 사용되지않음-->
+    <span>인라인블럭</span>
+    <span id = "span2">인라인블럭2</span>
+</body>
+</html>

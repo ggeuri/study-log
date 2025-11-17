@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button ondblClick="alert('더블')" onmouseover="alert('올림')" onmousedown="alert('내림')">버튼</button>
+    <input type="text" onFocus="this.value='포커스'" onBlur="this.style.background='yellow'">
+
+    <!-- select의 선택된 기존 값에서 다른 값으로 바뀌면 발생하는 이벤트에 반응하는 핸들러 -->
+     <!-- 이벤트와 이벤트핸들러는 다르다
+      이벤트 vs 핸들러
+      Click | onClick
+            | on이 붙는다는 특징  -->
+
+    <select name=" " id=" " onchange="alert('선택바꿈?')">
+        <option value="naver">네이버</option>
+        <option value="kakao">카카오</option>
+        <option value="google">구글</option>
+    </select>
+</body>
+</html>

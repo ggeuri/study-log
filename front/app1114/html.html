@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 재사용가능성이 높은 스타일은 클래스로 정의. 단, 클래스 표시는 명칭 앞에 . 
+        스타일 시트 구문에서 스타일 적용 대상이 되는 주체를 가리켜 선택자(selector)라한다.*/
+        .btStyle1{
+            background-color: red;
+        }
+        .btStyle2{
+            background-color: yellow;
+        }
+        /* div 후손 중 h2인 요소에 대해 */
+        div h2{
+            background-color: red;
+        }
+    </style>
+
+</head>
+<body>
+    <button class="btStyle1" >버튼1</button>
+    <button class="btStyle1" >버튼2</button>
+    <button class="btStyle1" >버튼3</button>
+    <button class="btStyle2" >버튼4</button>
+    <button class="btStyle2" >버튼5</button>
+
+    <div>
+        <h1>제목</h1>
+        <p>
+            <h2>안쪽 제목</h2>
+        </p>
+    </div>
+
+    
+</body>
+</html>

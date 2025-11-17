@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div{
+            background-color: rgb(231, 213, 249);
+            width: 100px;
+            height: 100px;
+            border-radius: 5px;
+            transform: rotate(20deg);
+        }
+
+    </style>
+    <script>
+        // 자바언어에서는 함수가 객체 안에 소속되어있기때문에 해당객체의 동작을 제어하는 용도이므로, 함수라고 부르지 않고 메서드라한다. 
+        // 따라서 아래의 roll()은 어떤 객체에도 포함되어있지않은 단독 함수영역이므로, 그냥 사용자 정의함수라한다.
+        let r = 0;  // 자바스크립트는 자료형이없어서 걍 let이라고 쓰면 됨  
+        function roll(){
+            // 문서 내에 div라 불리는 태그요소의 CSS중 transform:rotate()값을 증가시키자. 
+            r += 15;
+            // document.getElementById("box").style.transform = "rotate(" + r + "deg)"
+            // 문자,숫자,논리값 올 수 있음. 
+            
+            // 문자열 사이에 변수를 껴넣는 방식이 복잡할 경우, 템플릿 문자열을 이용할 수 있다 
+            document.getElementById("box").style.transform = `rotate(${r}deg)`
+
+        }
+    </script>
+</head>
+<body>
+    <!-- dividion의 약어로, 화면 분할 목적. 사용 빈도 압도적 -->
+     <div></div>
+     <br>
+     <button onclick="roll()" id = "box">회전</button>
+     <a href="javascript:roll()">돌리기</a> <!--자바스크립트영역 선언-->
+</body>
+</html>

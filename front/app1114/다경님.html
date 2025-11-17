@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container {
+            position: relative;
+            max-width: 1300px;
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            margin: auto;
+        }
+
+        img {
+            width: 150px;
+            position: absolute;
+            top: auto;
+            left: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        #pic2 {
+            width: 120px;
+            left: calc(50% - 60px);
+            bottom: calc(50% - 60px);
+            border: 1px solid #000;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+
+        .moveBtns {}
+
+        .moveBtns button:first-child {
+            margin: 0 auto 5px 34px
+        }
+    </style>
+</head>
+
+<body>
+    <div class="moveBtns">
+        <button onClick="moveTop()">⬆️</button><br>
+        <button onClick="moveLeft()">⬅️</button>
+        <button onClick="moveBot()">⬇️</button>
+        <button onClick="moveRight()">➡️</button>
+    </div>
+    <div class="container">
+        <div>Score: <span id="score">0</span></div>
+        <img id="pic" src="./images/mimitchi2.webp" alt="">
+        <img id="pic2" src="./images/dessert.png" alt="">
+    </div>
+</body>
+
+<script>
+    window.onload = function () {
+        let score = 0;
+        let x = 0;
+        let y = 0;
+        let pic = document.getElementById('pic');
+        let maxX = document.getElementsByClassName('container')[0].clientWidth - pic.clientWidth;
+        let maxY = document.getElementsByClassName('container')[0].clientHeight - pic.clientHeight;
+        let minX = 0;
+        let minY = 0;
+        function moveRight() {
+            x += 40;
+            if (x >= maxX) {
+                x = maxX;
+            }
+            pic.style.left = x + 'px';
+        }
+        function moveLeft() {
+            x -= 40;
+            if (x <= minX) {
+                x = minX;
+            }
+            pic.style.left = x + 'px';
+        }
+        function moveTop() {
+            y += 40;
+            if (y >= maxY) {
+                y = maxY;
+            }
+            pic.style.bottom = y + 'px';
+        }
+        function moveBot() {
+            y -= 40;
+            if (y <= minY) {
+                y = minY;
+            }
+            pic.style.bottom = y + 'px';
+        }
+
+        window.onkeydown = (e) => {
+            if (e.keyCode === 39) { moveRight(); }
+            if (e.keyCode === 37) { moveLeft(); }
+            if (e.keyCode === 38) { moveTop(); }
+            if (e.keyCode === 40) { moveBot(); }
+            happy();
+        };
+
+
+        let $score = document.getElementById('score');
+        let pic2 = document.getElementById('pic2');
+        let goalX = parseInt(window.getComputedStyle(pic2).left);
+        let goalY = parseInt(window.getComputedStyle(pic2).bottom);
+
+        function nextFood() {
+            let randomX = Math.floor(Math.random() * (maxX + 1));
+            let randomy = Math.floor(Math.random() * (maxY + 1));
+            pic2.style.left = randomX + "px";
+            pic2.style.bottom = randomy + "px";
+            goalX = parseInt(window.getComputedStyle(pic2).left);
+            goalY = parseInt(window.getComputedStyle(pic2).bottom);
+        }
+
+        function happy() {
+            let goalArea = x + pic.clientWidth >= goalX && y + pic.clientHeight >= goalY;
+            goalArea = goalArea && x <= goalX + pic2.clientWidth;
+            goalArea = goalArea && y <= goalY + pic2.clientHeight;
+            if (goalArea) {
+                pic.src = "./images/mimitchi.webp";
+                score++;
+                $score.innerText = score;
+                nextFood();
+            } else if (pic.src.includes("/mimitchi.webp")) {
+                console.log(goalX, x, goalY, y);
+                pic.src = "./images/mimitchi2.webp";
+            }
+        }
+    }
+</script>
+
+</html>

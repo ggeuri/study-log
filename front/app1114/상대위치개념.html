@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #box1{
+            background-color: red;
+            /* position: absolute; /* 다른 요소 있어도 중첩가능 */
+            position: relative; /* 초기 자신이 할당받은 위치인 static 기준으로 position설정*/
+            left: 0px;
+            top: 0px;
+
+            width: 100px;
+            height: 100px;
+        }
+        #box2{
+            background-color: blue;
+            /* position: absolute; */
+            position: relative; /*둘다 relative니까 위에것 왼쪽하단 꼭지기준으로 움직이네*/
+            left: 0px;
+            top: 0px;
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- 개발자가 포지션 지정안해주면 디폴트는 static
+     static특징 : 위치값을 조정할 수 없다. 따라서 left,top 적용되지 않음  -->
+
+    <div id = "box1">박스1</div>
+    <div id = "box2">박스2</div>
+</body>
+</html>

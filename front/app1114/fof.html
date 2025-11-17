@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .container{
+        width: 700px;
+        height: 600px;
+        margin: auto;
+        border: 3px solid;
+        background-color: black;
+    }
+    
+    .aside{
+        width: 100px;
+        height: 600px;
+        background-color: black;
+        float: left;
+        text-align: center;
+        overflow: scroll; 
+        /* overflow: hidden; = 컨텐츠가 더 많으면 가려줌*/
+    }
+    
+    .content{
+        width: 600px;
+        height: 600px;
+        background-color: aquamarine;
+        float: right;
+        text-align: center;
+        /* border: 1px solid; */
+    }
+
+    /* .aside img:nth-child(1){background-color: red;} */
+
+    .pic{
+        width: 90%;
+        /* float: left; */
+    }
+    
+    .picW{
+        width: 550px;
+        height: 550px;
+
+    }
+
+</style>
+<script>
+    function setPic(url){
+        let pic = document.querySelector(".picW");
+        // content img(후손 선택자), view(클래스 선택자)
+
+        pic.src = url; 
+        
+    }
+    function setText(poke){
+        let po = document.querySelector(".text");
+        po.innerText = poke; 
+    }
+</script>
+<body>
+
+<div class = "container">
+    <div class = "aside">
+        <img class = "pic" onmouseover="setPic(this.src); setText('팬텀')" src="images/poke/g.webp"> <!-- 아나 this사용가능 -->
+        <!-- <img class = "pic" onmouseover="setPic('images/poke/g.webp'); setText('팬~텀')" src="images/poke/g.webp"> -->
+        <img class = "pic" onmouseover="setPic('images/poke/go.webp');setText('파덕')"  src="images/poke/go.webp">
+        <img class = "pic" onmouseover="setPic('images/poke/m.webp'); setText('메가')" src="images/poke/m.webp">
+        <img class = "pic" onmouseover="setPic('images/poke/meta.webp');setText('변신~')" src="images/poke/meta.webp">
+        <img class = "pic" onmouseover="setPic('images/poke/na.webp'); setText('냐')" src="images/poke/na.webp">
+        <img class = "pic" onmouseover="setPic('images/poke/p.webp'); setText('거다이')"src="images/poke/p.webp">
+        <img class = "pic" onmouseover="setPic('images/poke/pa.webp');setText('파')" src="images/poke/pa.webp">
+        <img class = "pic" onmouseover="setPic('images/poke/ra.webp');setText('라프')" src="images/poke/ra.webp">
+        <img class = "pic" onmouseover="setPic('images/poke/sl.webp');setText('먹고자')" src="images/poke/sl.webp">
+    </div>
+    <div class = "content">
+        <img class = "picW" src="images/poke/meta.webp">
+        <div class = "text">또로</div>
+    </div>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+        /* 이 영역은 HTML이 아니라 CSS영역이라 주석도 다르게 생김 */
+        /* td를 대상으로 원하는 CSS 디자인 적용  */
+        td{
+            font-size:13px;
+            color:#000000;
+        }
+        input{
+            background-color: rgb(231, 231, 231);
+            border: 2px solid orange;
+        }
+        textarea{
+            background-color: rgb(255, 243, 243);
+            color: white;
+        }

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            margin: auto;
+            width: 500px;
+            height: 500px;
+            background-color: bisque;
+            display: flex;
+            border: 5px solid black;
+            
+        }
+
+        .aside{
+            width: 100px;
+            background-color: black;
+            overflow: hidden;
+            
+        }
+        
+        .thum{
+            width: 90px;
+        }
+
+        .content{
+            width: 400px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .full{
+            height: 400px;
+            /* object-fit: contain; */
+
+        }
+
+        .text{
+            width: 100%;
+            height: 100px;
+            background-color: floralwhite;
+            text-align: center;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class = "container">
+        <div class = "aside">
+            <img class = "thum" src="images/poke/거다이팬텀.webp" data-name="거다이팬텀">
+            <img class = "thum" src="images/poke/고라파덕.webp" data-name="고라파덕">
+            <img class = "thum" src="images/poke/라프라스.webp" data-name="라프라스">
+            <img class = "thum" src="images/poke/먹고자.webp" data-name="먹고자">
+            <img class = "thum" src="images/poke/메가팬텀.webp" data-name="메가팬텀">
+            <img class = "thum" src="images/poke/메타몽.webp" data-name="메타몽">
+            <img class = "thum" src="images/poke/에나비.webp" data-name="에나비">
+        </div>
+        <div class = "content">
+            <img class = "full" src="images/poke/거다이팬텀.webp" alt="">
+            <div class = "text"></div>
+
+        </div>
+    </div>
+    
+</body>
+<script>
+    let thum = document.querySelectorAll(".thum");
+    let full = document.querySelector(".full");
+    let text = document.querySelector(".text");
+
+    thum.forEach(e => {e.addEventListener("click", () => {
+    let name = e.dataset.name;
+    text.innerText = name;
+    full.src = e.src})});
+
+
+
+</script>
+</html>
+
+<!-- # **⭐ 문제 2) 이미지 갤러리 최신 방식으로 재구현**
+
+### **요구사항**
+
+- aside의 작은 이미지 목록을 클릭하면 큰 이미지 변경
+- data-name 속성 이용해서 이름 변경
+- addEventListener(“mouseover”) 사용
+- CSS는 flex로 구성 -->
