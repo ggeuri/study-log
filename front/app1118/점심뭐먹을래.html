@@ -1,0 +1,22 @@
+<script>
+    let food = new Array();
+    //생성자 호출에 의한 배열 생성, 크기 지정안해도 생성됨. 크기 지정해도 넘기면 자동 확장. java.util.List와 흡사    
+    let skill = ["java","oracle"];
+
+    food[0] = "김치찜";
+    food[1] = "부대찌개";
+    food[2] = "초밥";
+    food[3] = "곱창";
+    food[4] = "라면";
+    food[5] = "김밥";
+
+    let r = parseInt(Math.random()*food.length) ; 
+    // 난수는 1에 도달하지 못하므로 그 어떤수 n을 곱하면 최대값이 그 n에 도달하지 못함 
+    //r(0.0.999xxx)*3 = 3이 나올 수 없다. 
+    //JS는 그냥 parseInt 
+    
+    console.log(r);
+    console.log(food[r]);
+    console.log(`랜덤 값은 ${r}이 나왔으므로, 오늘 당신이 드실 점심은 ${food[r]}입니다.`);
+
+</script>

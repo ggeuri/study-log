@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            width: 400px;
+            height: 600px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            border: solid 2px;
+        }
+        .txt{
+            background-color: black;
+            color: white;
+            height: 200px;
+            font-size: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 200px;
+            /* flex면 align-items, justfy-content flex아니면 line-height + text-alingn */
+        }
+        .keyinput{
+            height: 150px;
+            width: 400px;
+            display: flex;
+        }
+        
+        .keyinput input{
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            border: 0;
+            font-size: 50px;
+            font-weight:900;
+            line-height: 100%;
+            text-align: center;
+            background-color: white;
+        }
+        
+        .feedback {
+            height: 150px;
+            background-color: rgb(9, 255, 46);
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            font-size: 50px;
+        }
+
+        .footer{
+            height: 100px;
+            background-color: black;
+            color: yellow;
+            line-height: 100px;
+            text-align: center;
+            font-size: 50px;
+        }
+
+
+    </style>
+
+</head>
+
+<body onload = "init()"> <!--로드는 보통 body에 적는다-->
+    <div class = "container">
+        <div class = "txt" ></div>
+        <div class = "keyinput" onkeyup="next()">
+            <input type="text" name="" id="" >
+            <!-- onkeyup="alert(event.keyCode)" 엔터는 13이다  -->
+        </div>
+        <div class = "feedback">X</div>
+        <div class = "footer" ></div>
+    </div>
+    
+</body>
+<script>
+    let words = ["팬텀","데덴네","피카츄","고오스","고우스트","망나뇽","라프라스","얼루기"];
+    let index = 0; 
+    let score = 0; 
+
+// 점수출력함수(게임 진행에 있어 재사용성이 높으면 함수. 수시출력
+    function printScore(){
+        let foot = document.querySelector(".footer");
+        foot.innerText = score +"점";
+
+    }
+
+    // 문서 내의 txt라는 클래스 요소 태그와 태그 사이에 문자열 껴넣기 
+    function init(){
+        let txt = document.querySelector(".txt");
+
+        txt.innerText=words[0]; 
+        printScore()
+    }
+    // 현재 유저가 보고있는 단어의 다음단어가 나오도록 처리 
+    function next(){
+        //문서 내의 txt라는 클래스를 갖는 요소의 innertext에 다음 배열 값 출력 
+        let txt = document.querySelector(".txt");
+        let input = document.querySelector(".keyinput input");
+        
+        if(event.keyCode === 13){
+            // keyinput input의 현재값과 txt.innerText가 동일하면 
+            if(txt.innerText === input.value){
+                index++;
+                txt.innerText=words[index];
+    
+                document.querySelector(".feedback").innerText="O";
+                document.querySelector(".keyinput input").value="";
+                // 점수 증가 
+                score += 10; 
+                printScore();
+            } else {
+                document.querySelector(".feedback").innerText="X";
+            }       
+        }
+    }
+    
+    
+    // function next(){
+    //     //문서 내의 txt라는 클래스를 갖는 요소의 innertext에 다음 배열 값 출력 
+    //     let txt = document.querySelector(".txt");
+        
+    //     if(event.keyCode === 13){
+    //         if(txt.innerText===input.value) {
+    //             words.forEach(e => {
+    //                 txt.innerText = e; 
+    //                 document.querySelector(".feedback").innerText="O";
+    //                 document.querySelector(".keyinput input").value="";
+    //                 score += 10; 
+    //                 printScore();
+    //             })} else {
+    //                 document.querySelector(".feedback").innerText="X";
+    //             }
+    //         }
+    //     }
+    // }
+            
+        
+    
+
+</script>
+</html>
