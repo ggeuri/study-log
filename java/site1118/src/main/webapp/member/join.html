@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--  https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_contact_form 여기서 디자인 훔쳐옴 -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
+
+input[type=text],[type=password] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  resize: vertical;
+}
+
+input[type=button] {
+  background-color: #04AA6D;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=button]:hover {
+  background-color: #45a049;
+}
+
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+</style>
+<script>
+/*HTML 태그요소에 지금까지 작성해왔던 이벤트 핸들러를 js 프로그래밍 언어 작성 */
+ 
+ /* 문서 내의 form 요소 이용하여 서버로 데이터 전 */
+ function send(){
+	let form1 = document.getElementById("form1");
+	form1.method="post";
+	form1.action="/member/join"; /* 폼 양식 전송할 요청 주소 : 서블릿 매핑 주소  */
+	form1.submit(); /* 전송이 일어나는 시점 */
+}
+ 
+ 
+ function init(){
+	 let bt_send = document.getElementById("bt_send");
+	 bt_send.addEventListener("click",function(){
+		 send();
+	/* 	alert("누름 ! "); */ 
+		/*  폼 양식에 입력한 모든 데이터를 서버로전송 */
+	 });
+	
+}
+ 
+window.addEventListener("load",function(){// 태그에다가 안주고 ! 프로그래밍언어로 호출 하기 
+/* 	alert("문서로드");  */
+	init();
+});
+
+
+</script>
+</head>
+<body>
+
+<h3>Contact Form</h3>
+
+<div class="container">
+  <form id = "form1">
+    <input type="text" name="id" placeholder="Your id...">
+    <input type="password" name="pwd" placeholder="Your password..">
+    <input type="text" id="name" name="name" placeholder="Your name..">
+    <input type="button" value="Submit" id = "bt_send">
+    <!-- 타입 submit은 무조건 전송이니 타입 버튼으로 변경함.  -->
+
+  </form>
+</div>
+
+</body>
+</html>

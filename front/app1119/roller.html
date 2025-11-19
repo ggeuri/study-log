@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+        /* <!-- 마진은 나와 외부 / 패딩은 나의 내용과의 여백 --> */
+        body{margin: 0;}
+
+        .container{
+            width: 1200px;
+            height: 700px;
+            background-color: antiquewhite;
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        .top{
+            display: flex;
+            flex-direction: row;
+            flex:1;
+        }
+
+        .content{
+            width: 1100px;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.539);
+            background-image: url(images/roller.png);
+            background-repeat: no-repeat; /*패턴반복중지*/
+            background-size: 1100px 105%;
+            position: relative;
+        }
+        .aside{
+            width: 100px;
+            height: 100%;
+            background-color: blanchedalmond;
+            overflow: scroll;
+        }
+
+
+    </style>
+</head>
+
+<body onload="init()">
+    <div class="container">
+        <!-- onmousemove -->
+         <div class="top">
+             <div class = "content" onmousedown="move()"></div>
+             <div class = "aside"></div>
+        </div>
+        <div class = "zip">    
+            <button onClick="manual()">수동</button>
+            <button onClick="auto()">자동</button>
+        </div>
+    </div>
+</body>
+<script>
+    let xy = new Array();
+    // 좌표 누적할 배열선언 현재까지는 1차원 배열이지만 좌표 넣을거니 2차원 배열. 전역변수 
+    let txt = ``;
+    let img; //다른데서도쓰기위해 전역변수로 
+
+    function moveMetaTo(x, y) {
+    img.style.left = x + "px";
+    img.style.top  = y + "px";
+    }
+
+    function move(){
+        let aside = document.querySelector(".aside");
+        let x = event.clientX;
+        let y = event.clientY;
+        // console.log(`현재 마우스 좌표는 ${x},${y}`);
+        // 우측의 aside 안에 출력하기
+        //일차원 배열을 생성하여 0번째x 1번째1...
+        xy.push([x,y]);
+
+        // 좌표를 출력하는 문자열이 대체되지 않고 누적되게 처리 
+        txt = txt + `x=${x},y=${y}\n`;
+        aside.innerText= txt;
+        // 이 함수 호출할때마다 div요소를 동적(runtime 실행시)으로 생성하여 content div화면에 부착
+        let dot = document.createElement("div"); 
+        dot.style.backgroundColor = "white";
+        dot.style.width=4 + "px";
+        dot.style.height=4 + "px";
+
+        // 부모인 content를 기준으로 한 위치속성인 absolute를 적용 
+        // 이 경우, content의 꼭지점이 dot의 0,0의 좌표가됨.
+        // 단 자식 요소에 static이 아닌 position이 명시될 경우, 반드시 부모요소에도 position을 선언해야함
+        dot.style.position="absolute"
+        dot.style.left= `${x}px`; 
+        dot.style.top= `${y}px`; 
+
+        // 모든 태그는 기본이 투명이므로, 배경색을 부여해야 보임
+        // 생성된 dot를 부모에 붙이기 
+        document.querySelector(".content").appendChild(dot);
+    }
+
+    function init(){
+        img = document.createElement("img");
+        document.querySelector(".content").appendChild(img);
+        img.src = "images/메타몽.webp";
+        img.style.width = 80+"px";
+        // html 태그요소는 개발자가 특별히 position을 명시하지 않으며 디폴트가 static이므로 
+        // left,top이 적용되지않으므로 왼쪽상단을 기준으로 부착
+        // 따라서 위치를 자유롭게 하고싶다면 개발자는 css의 position을 명시할 수 있다
+        // 1)absolute : 부모요소를 기준으로 한 위치속성
+        // 2)relative : 현재 자신의 본연의 위치를 기준으로 한 위치 속성 
+        // 현재 캐릭터는 부모인 content div를 기준으로 위치 지정할 것이므로, absolute 지정 필요함
+
+        img.style.position = "absolute";
+        img.style.left= `50px`; 
+        img.style.top= `100px`; 
+    }
+
+    function manual(){
+        // 문서 내의 content영역안에 존재하는 캐릭터 이미지의 위치를 누적된 좌표를 대상으로 
+        // 순서대로 접근해 보자 xy넣어야지 
+        // 주인공의 left, top값을 지정하자 
+        // 버튼 누를떄마다 xy 좌표값을 1씩 증가시키면서
+        for (let index = 0; index < xy.length; index++) {
+            img.style.left = xy[index][0]+"px"; 
+            img.style.top = xy[index][1]+"px"; 
+            moveMetaTo(xy[index][0], xy[index][1]);
+        }
+
+
+    }
+</script>
+</html>
