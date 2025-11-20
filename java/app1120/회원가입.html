@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            width: 800px;
+            height: 650px;
+            margin: auto;
+            background-color: antiquewhite;
+            display: flex;
+            border: solid 2px;
+            
+        }
+        .aside_regist{
+            width: 150px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: black;
+        }
+        .aside_regist input{
+            width: 120px;
+            height: 30px;
+            margin: 10px auto;
+        }
+
+        .content{
+            width: 500px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: beige;
+        }
+
+        .header{
+            height: 50px;
+            background-color: gray;
+            display: flex;
+            align-items: center;
+        }
+
+        .header input{
+            width: 250px;
+            height: 25px;
+        }
+        .list{
+            height: 600px;
+            background-color: aquamarine;
+        }
+
+
+        .aside_detail{
+            width: 150px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;  
+        }
+
+        .aside_detail input{
+            width: 120px;
+            height: 30px;
+            margin: 10px auto; 
+        }
+
+
+    </style>
+
+</head>
+<body>
+    <div class = "container">
+        <div class = "aside_regist" >
+            <input type="text">
+            <input type="text">
+            <input type="text">
+            <button></button>
+        </div>
+        <div class = "content" >
+            <div class = "header">
+                <input type="text">
+                <button>검색</button>
+            </div>
+            <div class = "list">
+                <ol>
+
+
+                </ol>
+            </div>
+        </div>
+        <div class = "aside_detail" >
+            <input type="text">
+            <input type="text">
+            <input type="text">
+            <button>삭제</button> <button>수정</button>
+        </div>
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            width: 600px;
+            height: 550px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            background-color: antiquewhite;
+        }
+        .header{
+            height: 50px;
+            background-color: palevioletred;
+            display: flex;
+            justify-content: center;  
+            align-items: center; 
+            /* line-height: 50px; */
+            gap: 100px;
+        }
+        .arrow{
+            font-size: 30px;
+            cursor: pointer;
+        }
+            
+        .w{
+            height: 500px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .aside{
+            width: 100px;
+            background-color: lavender;
+        }
+
+        .aside img{
+            max-width: 90px;
+            overflow: hidden;
+        }
+
+        .content{
+            width: 500px;
+            height: 500px;
+            background-color: black;
+        }
+        .content img{
+            max-width: 100%;
+            height: 500px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <div class = "container">
+        <div class = "header">
+            <button class="arrow" onclick="prev()">◁</button>
+            <button class="arrow" onclick="next()">▷</button>
+        </div>
+        <div class = "w">
+        <div class = "aside">
+            <img class = "pic1" src="images/poke/거다이팬텀.webp" alt="" onClick="view(0)">
+            <img class = "pic2" src="images/poke/고라파덕.webp" alt="" onClick="view(1)">
+            <img class = "pic3" src="images/poke/라프라스.webp" alt="" onClick="view(2)">
+            <img class = "pic4" src="images/poke/먹고자.webp" alt="" onClick="view(3)">
+            <img class = "pic5" src="images/poke/메가팬텀.webp" alt="" onClick="view(4)">
+        </div>
+        <div class = "content">
+            <img class = "wpic" src="images/poke/메타몽.webp" alt="">
+        </div>
+        </div>
+    </div>
+</body>
+
+<script>
+// 갤러리에 사용될 이미지를 메모리에 올려놓되, 그 순서는 개발자가 임의로 정할 수 있어야 한다. 
+
+    let photo = [
+        "images/poke/거다이팬텀.webp"
+        ,"images/poke/고라파덕.webp" 
+        ,"images/poke/라프라스.webp" 
+        ,"images/poke/먹고자.webp"
+        ,"images/poke/메가팬텀.webp" 
+    ];
+    let index=0; 
+    let pic = document.querySelector(".content img");
+
+    function next(){
+        // 다음 버튼을 누르면, 메모리에 올라온 전역 변수인 photo배열의 index를 1씩 증가시킴 
+        index++;
+        pic.src = photo[index];
+    }
+
+    function prev(){
+    // 다음 버튼을 누르면, 메모리에 올라온 전역 변수인 photo배열의 index를 1씩 증가시킴 
+    index--;
+    pic.src = photo[index];
+    }
+
+    // 좌측 썸네일 선택시 우측 큰 이미지가 선택한 이미지로 대체
+    function view(obj){
+        console.log("매개변수로 전달된 obj",obj);
+        index = obj;
+        pic.src = photo[index];
+
+    }
+
+    //근데 이러면 연동이 안됨 next,prev랑 view 가 
+    // 각 썸네일을 선택하면 인데스를 제어해줘야한다. view에서 for문넣어서 if(photo[i])일치하면 index=i로하면되지않을까
+    // 혹은 obj를 인덱스로 바꾸는법 
+
+
+
+
+</script>
+</html>

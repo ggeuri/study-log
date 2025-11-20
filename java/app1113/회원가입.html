@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+    </style>
+</head>
+<body>
+
+<table border="1px" cellspacing="0" cellpadding="5" align="center" > 
+    <tr>
+        <td colspan="2" align="center"><b>회원가입</b></td>
+    </tr>
+    <tr>
+        <td align="center">ID</td>
+        <td><input placeholder="아이디를 입력하세요."></td>
+    </tr>
+    <tr>
+        <td align="center">Password</td>
+        <td><input placeholder="비밀번호를 입력하세요." size="20"></td>
+    </tr>
+    <tr>
+        <td align="center">name</td>
+        <td><input></td>
+    </tr>
+    <tr>
+        <td align="center">이메일</td>
+        <td><input name = "email" size = "10">@
+            <input name = "domain" size = "10">
+            <select>
+            <option value = "">메일 선택</option>
+            <option value = "gmail.com">구글</option>
+            <option value = "naver.com">네이버</option>
+            <option value = "daum.net">다음</option>
+            <option value = "direct">기타: 직접입력</option>
+        </select></td>
+    </tr>
+    <tr>
+        <td align="center">보유 기술</td>
+        <td><input type = "checkbox"> Java 
+            <input type = "checkbox"> Spring 
+            <input type = "checkbox"> DB 
+            <input type = "checkbox"> FrontEnd 
+        </tr>
+    <tr>
+        <td align="center">경력 사항</td>
+        <td><textarea rows="10" cols="40"></textarea></td>
+    </tr>
+    <tr>
+        <td align="center">개인정보 수신 동의</td>
+        <td> <!--아래의 두 radiio 컴포넌트에 대해 양자택일하려면 메모리 올라갈 때 배열화 필요. id/name-->
+            <input type = "radio" name = "ag"> 동의 
+            <input type = "radio" name = "ag" > 미동의 
+        </tr>
+    <tr>
+        <td colspan="2" align ="center"><button>등록</button>         <button>로그인</button></td>
+    </tr>
+
+</table>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html> <!--html5라는 걸 의미. 최신 디바이스 다 지원한다는.. 최적화. 반응형 지원(다양한 기기에 대응하는 디자인 기능)-->
+<html lang="en">
+<head>
+  <style>
+  table, th, td {
+    border: 1px solid black;
+}
+</style>
+  <h3>Movie</h3>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title> <!--타이틀은 헤드에. -->
+</head>
+
+<body>
+  <!--태그사용시 보여지는 결과로 판단하면 안되고, 의미와 목적에 맞게 태그를 사용해야
+  즉, 표준에 맞게 작성해야한다. (sementic)-->
+  
+  <h1> Movie List </h1><br>
+  <strong>What's Movie</strong><br>
+  <a href="https://daum.net">kakao</a> <!--a는 앵커(닻)임. 링크달기-->
+  <hr> <!--수평선 hr -->
+  <p>하나의 문단이라 간격 조절 알아서 됨.</p>
+  <!--image와 같이 특정 텍스트 대상 태그가 아닌, 브라우저 실행 시 실제 이미지로 대체되는 태그를 가리켜 대체태그라 함-->
+  <img src="data:image/jpeg;base64,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">
+  <!--d인터넷에서 땡겨와도 되고 다운받아서 넣어도되고-->
+  <br><img src="image/mon.jpg" width="500">
+  <!--html 경로에서 .의 의미는 현재 이 문서가 위치한 디렉토리 우리의 경우 app1113-->
+  
+  <!--순서있는목록 ordered list / unordered list-->
+  <ol>
+    <li>사과</li>
+    <li>딸기</li>
+    <li>바나나</li>
+    <li>키위</li>
+    <li>복숭아</li>
+  </ol>
+
+  <ul>
+    <li>BMW</li> <!--li*5하면 알아서 만들어주네 -->
+    <li>BENZ</li>
+    <li>AUDI</li>
+    <li>SONATA</li>
+    <li>PRIDE</li>
+  </ul>
+
+  <button>등록</button>
+  <button>취소</button>
+  <br>
+  <input type="radio"> 
+  <br>
+  프로그래밍 <input type="checkbox">
+  게임 <input type="checkbox">
+  독서 <input type="checkbox">
+  농구 <input type="checkbox">
+  여행 <input type="checkbox">
+  <br>
+  <!--힌트써주기 가능 placeholder, 그리고 input의 기본값은 text임--> 
+  <input type="text" placeholder="아이디를 입력하세요." maxlength="8"> 
+  <!--password타입은 알아서 마스킹해줌-->
+  <input type="password" placeholder="비밀번호를 입력하세요." maxlength="8"> 
+  <br>
+
+  <!--다중택일 선택박스-->
+  <select>
+    <option value="">구글</option>
+    <option value="">다음</option>
+    <option value="">네이버</option>
+    <option value="">직접입력</option>
+  </select>
+  <!--다중 선택박스-->
+  <!--select>option*4 엠맷-->
+  <select multiple>
+    <option value="">java</option>
+    <option value="">react</option>
+    <option value="">spring</option>
+    <option value="">msa</option>
+  </select>
+
+<b><i> 후에에에엥 </i></b>
+  
+  <table>
+    <tr>
+      <th>Movie</th>
+      <th>Review</th>
+    </tr>
+    <tr>
+      <td>Monster</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td>Wall-E</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>Toy</td>
+      <td>9</td>
+    </tr>
+  </table>
+  <menu>
+    <li>Monster</li>
+    <img src="image/mon.jpg" width="500">
+    <li>Wall-E</li>
+    <img src="image/wa.jpg" width="500">
+    <li>Toy</li>
+    <img src="image/toy.jpg" width="500">
+  </menu>    
+</body>
+</html>

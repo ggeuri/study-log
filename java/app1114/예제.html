@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            width: 600px;
+            height: 400px;
+            margin: auto;
+        }
+        .box1{
+            /* block 요소를 대상으로 float시키면 기존 block이 보유하고 있던 배척성이 사라져서 다른요소와 공존이 가능하다  */
+            float:left; 
+            background: red;
+            width: 300px;
+            height: 400px;
+        }
+        .box2{
+            /* position: relative; */
+            /* left:auto; */
+            float:left;
+            background: yellow;
+            width: 300px;
+            height: 400px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <!-- 안에 들어있는 요소들을 한꺼번에 중앙으로 옮기거나 처리하려면 바깥쪽 존재할 컨테이너를 두는 것이 실무상 관례 wrapper,container-->
+    <div class="container">
+        <div class = "box1">빨강</div><div class = "box2">노랑</div>
+    </div>
+</body>
+</html>

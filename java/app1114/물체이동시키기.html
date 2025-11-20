@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            background: rgb(255, 240, 242);
+            width: 700px;
+            height: 700px;
+            margin-left: auto; /*position은 모니터마다 다르니 컴퓨터에 스스로 계산요청*/
+            margin-right: auto; 
+            position: relative; /*상대위치 : 자식에 포지션 명시되었으므로, 부모도 포지션 명시 필요
+                                css가 지원하는 포지션 중 상대위치 사용*/
+    
+        }
+        #pic{
+            position:absolute;
+            width: 200px; /*너비만적용하면 높이는 알아서 조절됨 비율유지가능*/
+            left: 0px;
+             /*자식 요소에 포지션이 설정되면 반드시 부모에도 포지션이 명시되어야 함.  */
+        }
+
+    </style>
+    <script>
+        let value = 0; 
+        
+        // let leftValue = 0; 
+        // 문서 내 pci의 x위치 속성값 증가시키기 
+        function moveRight(){
+            let pic = document.getElementById("pic");
+            value += 10;
+            pic.style.left = value+"px";
+            
+        }
+        function moveLeft(){
+            let pic = document.getElementById("pic");
+            value -= 10
+            pic.style.left = value+"px";
+            
+        }
+
+
+        
+        
+    </script>
+
+</head>
+
+<body>
+    <button onClick="moveLeft()">왼쪽이동</button>
+    <button onClick="moveRight()">오른쪽이동</button>
+    
+    <div class = "container"> <!--오 클래스하면 위에 올릴수있구나-->
+        <img src="images/meta.webp" id="pic">
+    </div>
+</body>
+</html>
+
+<!-- 콘솔창에서 엔터 시프트엔터-->

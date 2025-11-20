@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #box{
+            background-color: rgb(230, 255, 255);
+            width: 200;
+            height: 200px;
+            font-size: 70px;
+            color: rebeccapurple;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    <script>
+        let n = 0; // 여기 영역에 변수 선언하면 전역변수 
+        function setCount(){
+            n++;
+            document.getElementById("box").value = n; // 박스에 접근 
+
+            // 문서 내에 box라 불리는 아이디를 갖는 요소가 보유한 value 속성 값을 +1 씩 증가시키고싶어 
+
+        }
+    </script>
+</head>
+<body>
+    <input type="text" id = "box" value="0">
+    <br>
+    <br>
+    <button onclick="setCount()" id= "but">카운터 증가</button>
+</body>
+</html>

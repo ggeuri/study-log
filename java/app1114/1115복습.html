@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            margin:auto;
+            background-color: antiquewhite;
+            width: 700px;
+            height: 600px;
+        }
+
+        .header{
+            height: 100px;
+            background-color: black;
+            display: flex; /*div는 block이라 중첩불가. 그러니까 일단 플롯? 하위 div들도 float해야함?*/
+        }
+
+        .header div:nth-child(1) {flex:1; height: 100px; background-color: red;}
+        .header div:nth-child(2) {flex:1; height: 100px; background-color: orange;}
+        .header div:nth-child(3) {flex:1; height: 100px; background-color: yellow;}
+        .header div:nth-child(4) {flex:1; height: 100px; background-color: green;}
+        .header div:nth-child(5) {flex:1; height: 100px; background-color: blue;}
+        .header div:nth-child(6) {flex:1; height: 100px; background-color: navy;}
+        .header div:nth-child(7) {flex:1; height: 100px; background-color: purple;}
+
+        .content{
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div class = "container">
+        <div class = "header">
+            <div class = "box"></div> 
+            <div class = "box"></div> 
+            <div class = "box"></div> 
+            <div class = "box"></div> 
+            <div class = "box"></div> 
+            <div class = "box"></div> 
+            <div class = "box"></div> 
+        </div>
+        <div class = "content">
+        </div>
+    </div>
+</body>
+
+    <script>
+
+        let content = document.querySelector(".content");
+        let box = document.querySelectorAll(".box");
+        
+        box.forEach( a => {
+            a.addEventListener("mouseover", function() {
+                let color = getComputedStyle(a).backgroundColor;
+                content.style.background = color;
+            });
+        });  
+    </script>
+
+</html>
+
+<!-- 
+⭐ 문제 1) addEventListener로 색상 변경 박스 만들기
+
+요구사항
+	•	7개의 컬러 박스를 HTML로 만든다.
+	•	어떤 박스에 마우스를 올리면 아래 content의 배경색이 바뀐다.
+	•	inline 이벤트 금지.
+	•	querySelectorAll + forEach 사용.
+ -->

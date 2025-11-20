@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 모든 태그 요소는 Box
+        모든 태그 요소는 inline이거나 block 
+        1. block : 나와 같은 수평선 상의 그 어느 누구도 공존을 허락하지 않음(공간 혼자 차지함)
+            따라서, 다른 요소를 줄바꿈해버림. 그러면 오른쪽에 뭐 못놓겠네..제목같은 애 
+            대표적은 block은 제목설정인 h1. 너비 줄여서 빈공간있어도 다른 요소 못들어옴. 
+        2. inline: 자신이 보유한 컨텐츠만큼만 크기 차지, 같은 수평선상 다른 요소 허용 버튼처럼 공존가능
+        3. inline-block:혼합형*/
+        h1{
+            background-color: blue;
+            width: 20px;
+        }
+        p{
+            background-color: yellow;
+        }
+        div{
+            background-color: red;
+        }
+        
+    </style>
+
+</head>
+<body>
+    <h1>제목</h1>
+    <button>버튼1</button>
+    <button>버튼2</button>
+    <p>문단1</p>
+    <button>버튼3</button>
+    <div>영역s</div>
+    <div>영역s</div>
+</body>
+</html>

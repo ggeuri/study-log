@@ -20,8 +20,8 @@ public class ListController extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //		클라이언트인 브라우저가 보게될 컨텐츠작성 
 //		다국어 안깨지려면 인코딩 필요 
-		response.setContentType("text/html");
-		response.setCharacterEncoding("utf-8");
+		response.setContentType("text/html;charset=utf-8");
+		request.setCharacterEncoding("utf-8");
 		PrintWriter out = response.getWriter();
 //		5층의 3호수 
 //		String tag = "<table border = \"2px\">" ;

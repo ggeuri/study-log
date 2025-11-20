@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            margin: auto;
+            width: 700px;
+            height: 500px;
+            background-color: bisque;
+        }
+    
+        .box{
+            width: 100px;
+            height: 100px;
+            float: left;
+        }
+    
+        /* 가상클래스. 개발자가 명시 X 내부적으로 인식 */
+        .header div:nth-child(1){background-color: red;}
+        .header div:nth-child(2){background-color: orange;}
+        .header div:nth-child(3){background-color: yellow;}
+        .header div:nth-child(4){background-color: green;}
+        .header div:nth-child(5){background-color: blue;}
+        .header div:nth-child(6){background-color: navy;}
+        .header div:nth-child(7){background-color: purple;}
+    
+        .content{
+            width: 100%;
+            height: 400px;
+            background-color: black;
+            clear: both;
+        }
+    </style>
+    <script>
+        
+        function setBg(color){
+            // 마우스 올리면 색 바뀌는거 
+            let content = document.querySelector(".content");
+
+            content.style.background= color;
+            // querySelector
+        }
+    </script>
+</head>
+<body>
+<div class = "container">
+    <div class = "header">
+        <div class = "box" onmouseover="setBg('red')">red</div>
+        <div class = "box" onmouseover="setBg('orange')">orange</div>
+        <div class = "box" onmouseover="setBg('yellow')">yellow</div>
+        <div class = "box" onmouseover="setBg('green')">green</div>
+        <div class = "box" onmouseover="setBg('blue')">blue</div>
+        <div class = "box" onmouseover="setBg('navy')">navy</div>
+        <div class = "box" onmouseover="setBg('purple')">purple</div>
+    </div>
+
+    <div class = "content">
+        <div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script>
+    let n = 1;
+    function next(){
+        // 문서 내의 pic이라는 아이디를 갖는 요소의 src 의 이미지 경로값을 변경하자 
+        let pic = document.getElementById("pic")
+        pic.src=`image/hero/image${n}.png`;
+        n++;
+
+        if(n > 18) n = 1;
+        }
+    function auto(){
+        // 자동이란 이미 존재하는 수동 코드를 컴퓨터에게 맡기는 것 
+        // 자바스크립트 언어로 하여금 지정된 간격으로 지속적으로 next()함수를 호출하게 하자 
+        setInterval("next()",30);
+    }
+         
+</script>
+<body>
+    <p><!--아 p로 묶어서 떨구는군 -->
+        <button onclick="next()">수동</button>
+        <button onclick="auto()">자동</button>
+    </p>
+    
+    <p>
+        <img src = "image/hero/image1.png" id = "pic">
+    </p>
+</body>
+</html>

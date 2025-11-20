@@ -1,0 +1,42 @@
+<script>
+    // 모든 프로그래밍 언어에는 배열이 지원됨. 단 표기 형식이 약간씩 다름.
+    let arr=["apple","banana","graph"]; 
+    let car=["bmw","benz","audi"]; 
+    let skill=["java","jsp","spring"]; // 전역변수라 개발자모드로 열어서 콘솔에 찍으면 보임 
+
+    for (let index = 0; index < arr.length; index++) {
+        console.log(arr[index]);
+    }
+    
+    // 일차원 배열이 모여진 또다른 배열을 이차원배열이라 함 
+    let box = [
+        arr,car,skill
+    ]; 
+    
+    
+    for (let i = 0; i < box.length; i++) { //층
+        console.log(box[i])
+        for (let j = 0; j < box[i].length; j++){ //호수 
+            console.log(box[i][j]);
+        }
+        // console.log("\n");
+    }
+    
+    box.forEach(e => {
+        console.log(e)
+        e.forEach(a => {
+            console.log(a) 
+        })
+    });
+
+// 공부방법 
+    
+
+    
+    
+    
+
+
+
+
+</script>
