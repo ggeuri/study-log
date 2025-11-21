@@ -86,7 +86,7 @@ public class JoinController extends HttpServlet{
 					out.print("가입성공");
 					
 					emailManager.send(email);
-					response.sendRedirect("/member/list");
+					response.sendRedirect("/member/list"); // 예약전송같은 효과라 return직접 지정안했으면 doPost안꺼짐 
 //					회원목록페이지 보여주기 Select 문 말고 
 					
 					

@@ -47,12 +47,12 @@
     <div class="container">
         <!-- onmousemove -->
          <div class="top">
-             <div class = "content" onmousedown="move()"></div>
+             <div class = "content" onmousedown="move(event)"></div>
              <div class = "aside"></div>
         </div>
         <div class = "zip">    
             <button onClick="manual()">수동</button>
-            <button onClick="auto()">자동</button>
+            <button onClick="auto()" id= "bt_auto" >자동</button>
         </div>
     </div>
 </body>
@@ -61,16 +61,20 @@
     // 좌표 누적할 배열선언 현재까지는 1차원 배열이지만 좌표 넣을거니 2차원 배열. 전역변수 
     let txt = ``;
     let img; //다른데서도쓰기위해 전역변수로 
+    let step = 0;
 
     function moveMetaTo(x, y) {
     img.style.left = x + "px";
     img.style.top  = y + "px";
     }
 
-    function move(){
+    function move(event){
         let aside = document.querySelector(".aside");
-        let x = event.clientX;
-        let y = event.clientY;
+        let rect = document.querySelector(".content").getBoundingClientRect();   // content의 화면 좌표
+
+        // 브라우저 전체 기준 좌표 -> content 기준 좌표로 변환
+        let x = event.clientX - rect.left;
+        let y = event.clientY - rect.top;
         // console.log(`현재 마우스 좌표는 ${x},${y}`);
         // 우측의 aside 안에 출력하기
         //일차원 배열을 생성하여 0번째x 1번째1...
@@ -114,18 +118,29 @@
         img.style.top= `100px`; 
     }
 
-    function manual(){
-        // 문서 내의 content영역안에 존재하는 캐릭터 이미지의 위치를 누적된 좌표를 대상으로 
-        // 순서대로 접근해 보자 xy넣어야지 
-        // 주인공의 left, top값을 지정하자 
-        // 버튼 누를떄마다 xy 좌표값을 1씩 증가시키면서
-        for (let index = 0; index < xy.length; index++) {
-            img.style.left = xy[index][0]+"px"; 
-            img.style.top = xy[index][1]+"px"; 
-            moveMetaTo(xy[index][0], xy[index][1]);
-        }
+function manual(){
+    // 문서 내의 content영역안에 존재하는 캐릭터 이미지의 위치를 누적된 좌표를 대상으로 
+    // 순서대로 접근해 보자 xy넣어야지 
+    // 주인공의 left, top값을 지정하자 
+    // 버튼 누를떄마다 xy 좌표값을 1씩 증가시키면서
 
-
+    if (step >= xy.length) {
+        return;
     }
+
+    let x = xy[step][0];
+    let y = xy[step][1];
+
+    moveMetaTo(x, y);  
+
+    step++; 
+}
+function auto(){
+    setInterval(manual,100);
+    // 엉킴방지위해 버튼 자체를 비활성화 
+    // 문서 내의 자동버튼을 비활성화 시키자 
+    document.getElementById("bt_auto").disabled=true;
+
+}
 </script>
 </html>

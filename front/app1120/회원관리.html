@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            width: 800px;
+            height: 650px;
+            background-color: rgb(200, 255, 237);
+            margin: auto;
+        }
+        .aside_regist{
+            width: 150px;
+            height: 100%;
+            background-color: rgb(255, 218, 170);
+            float:left;
+        }
+        .content{
+            width: 500px;
+            height: 100%;
+            background-color: rgb(0, 0, 0);
+            float:left;
+        }
+        .header{
+            width: 100%;
+            height: 50px;
+            background-color: rgb(255, 255, 221);
+        }
+        .list{
+            width: 100%;
+            height: 600px;
+            background-color: white;
+        }
+        .aside_detail{
+            width: 150px;
+            height: 100%;
+            background-color: rgb(190, 224, 255);
+            float:left;
+        }
+        .aside_regist input, .aside_detail input{
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="aside_regist">
+            <form name="form1">
+                <!-- 가입용 폼: 상세보기/수정 폼과 구분하기 위해 id를 reg_* 로 부여 -->
+                <input type="text" id="reg_id" placeholder="Your ID">
+                <input type="text" id="reg_pwd" placeholder="Your Password">
+                <input type="text" id="reg_name" placeholder="Your Name">
+                <!-- 버튼은 타입명시안하고 form태그에 넣으면 자동으로 submit 
+                 현재 form양식 으로 감싸진 모든 요소를 서버로 전송 action(서버의url) 명시하지
+                 않으면 새로고침 효과 남 해결책 = button의 type을 button으로 명시  -->
+                <button type="button">가입 </button>
+            </form>
+        </div>
+        <div class="content">
+            <div class="header"></div>
+            <div class="list"></div>
+        </div>
+        <div class="aside_detail">
+            <form action="">
+                <!-- 상세/수정 폼은 detail_* 로 분리 (가입폼과 id 충돌 방지용) -->
+                <input type="text" id="detail_id" placeholder="Your ID">
+                <input type="text" id="detail_pwd" placeholder="Your Password">
+                <input type="text" id="detail_name" placeholder="Your Name">
+                <button>삭제 </button>
+                <button>수정 </button>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    let memberList = new Array(); //크기결정하면안댕.현재까지는 1차원이지만 회원추가되면 2차원된다
+
+    function init(){
+        let bt_regist = document.querySelector(".aside_regist button");
+        bt_regist.addEventListener("click", function(){
+            alert("배고프다");
+            // 한사람에 대한 정보를 담을 함수 호출 
+            regist();
+        });
+    }
+
+    // 가입폼에서 등록할 한 사람에 대한 정보를 먼저 1차원 배열에 담고, 회원의 목록 보관하기위한 또하나의 큰 배열
+    // 캐릭터 움직이던거 생각하십쇼. 배열에 또다른 배열 추가되므로 최종적으로는 2차원 배열이 표형태가 완성
+    // 메모리 데이터베이스  
+    function regist(){
+        let member = new Array(3);
+        // 0,1,2 = id,pwd,name
+        // 한사람에 대한 정보를 담은 member 배열 -> 회원 모아놓을 memberList배열에 push
+
+        // 가입 폼의 값 읽기 (reg_* 사용)
+        member[0] = document.getElementById("reg_id").value;
+        member[1] = document.getElementById("reg_pwd").value;
+        member[2] = document.getElementById("reg_name").value;
+
+        memberList.push(member); 
+        console.log(`현재까지 누적된 회원은 ${memberList.length}명입니다.`);
+        getList();
+
+        // 입력했던 텍스트 박스 데이터 초기화 
+        // 메모리에 올라온 DOM객체를 접근하는 방법은 여러가지가 있다
+        // document.getElementByID(),document.querySelector()등등
+        // HTML의 부모자식 관계는 DOM요소에도 영향을 미침 
+        // window.document.form1.reset();
+        document.getElementById("reg_id").value = "";
+        document.getElementById("reg_pwd").value = "";
+        document.getElementById("reg_name").value = "";
+    }
+
+    function getDetail(v1,v2,v3){
+        document.getElementById("detail_id").value=v1;
+        document.getElementById("detail_pwd").value=v2;
+        document.getElementById("detail_name").value=v3;
+    }
+
+    // 유저가 목록에서 선택한 유저 한명에 대한 자세한 정보를 우측영역에 출력하기 
+
+    // 회원의 목록을 출력하는 함수, 회원의 목록은 가입,삭제,수정시 수시로 실행할 코드이므로 재사용성 높음 
+    // 문서내의 .list라는 클래스명을 갖는 div에 동적으로 table 태그 출력  
+    function getList(){
+        let list = document.querySelector(".list"); 
+        let tag = "";
+        tag += "<table border='1'>";
+        tag +=     "<thead>";
+        tag +=         "<tr>";
+        tag +=             "<th>ID</th>";
+        tag +=             "<th>Pwd</th>";
+        tag +=             "<th>Name</th>";
+        tag +=         "</tr>";
+        tag +=     "</thead>";
+        tag +=     "<tbody>";
+
+        for (let i = 0; i < memberList.length; i++) {
+            // 각 행에 마우스를 올리면 alert() 실행 (테스트용 onMouseOver 이벤트)
+            // 담주 월요일 삭제 수정 
+            tag = tag + "<tr onMouseOver = 'this.style.background=\"yellow\"; this.style.cursor=\"pointer\"' onMouseOut = 'this.style.background=\"none\"' onClick ='getDetail(\""+memberList[i][0]+"\",\""+memberList[i][1]+"\",\""+memberList[i][2]+"\")'>";
+            for (let y = 0; y < memberList[i].length; y++) {
+                tag += "<td>" + memberList[i][y] + "</td>";
+            }
+            tag += "</tr>";
+        }
+
+        tag +=     "</tbody>";
+        tag += "</table>";
+
+        list.innerHTML = tag;
+    }
+
+    // js전역 영역은 js의 window객체로 표현됨
+    // 전역객체는 생략가능
+    // 이벤트 구현시 사용되는 이름없는 익명 함수의 역할을 가리켜 콜백함수라한다
+    // 왜 콜백? 일반적으로 함수는 개발자가 원하는 시점에 직접 호출하여 사용하는 반명, 콜백함수는 특정이벤트나 조건 발생시 
+    // 시스템이 역으로 개발자가 정의해놓은 함수를 호출해준다하여 콜백이라함 .
+    addEventListener("load", function(){
+        init();
+    });
+</script>
+</html>

@@ -1,0 +1,17 @@
+<servlet>
+<servlet-name>joinServlet</servlet-name>
+<servlet-class>controller.JoinController</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>joinServlet</servlet-name>
+<url-pattern>/member/join</url-pattern>
+</servlet-mapping>
+
+<servlet>
+<servlet-name>listServlet</servlet-name>
+<servlet-class>controller.MemberList</servlet-class> <!--루트 똑같으니까 앞에 제거?-->
+</servlet>
+<servlet-mapping>
+<servlet-name>listServlet</servlet-name>
+<url-pattern>/member/list</url-pattern>
+</servlet-mapping>

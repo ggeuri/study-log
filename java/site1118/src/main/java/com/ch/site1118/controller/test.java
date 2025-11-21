@@ -47,6 +47,18 @@ public class test extends HttpServlet{
 				
 				if(con!=null) {
 					out.print("접속성공");
+					
+					String sql = "insert into member(member_id,id,pwd,name,email)"
+							+ " values(seq_member.nextval, ?,?,?,?";
+					prsmt = con.prepareStatement(sql);
+					
+					prsmt.setString(1, id);
+					prsmt.setString(2, pwd);
+					prsmt.setString(3, name);
+					prsmt.setString(4, email);
+					
+					prsmt.executeUpdate(sql);
+					
 				} else {
 					out.print("실패");
 				}
@@ -58,6 +70,27 @@ public class test extends HttpServlet{
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally {
+			if(prsmt != null) {
+				try {
+					prsmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			if(con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+				
+		
+			
 		}
 		
 		

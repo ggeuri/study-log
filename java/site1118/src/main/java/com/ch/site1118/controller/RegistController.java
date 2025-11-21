@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 // 따라서 HttpServlet이 보유한 doXXX형 메서드 중 doPost를 재정의해야함 
 
 public class RegistController extends HttpServlet {
-	@Overrid
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 클라이언트가 전송한 id, pw, name을 받아서 출력해보기 
 	System.out.println("클라이언트의 post 요청감지 "); //웹브라우저 말고현재 톰캣 콘솔에 출력 
