@@ -83,10 +83,11 @@
 
 ⸻
 
-🤝 Collaboration & Workflow
-	•	Jira — 티켓 생성·하위 작업·우선순위 설정·프로세스 기반 이슈 관리
-	•	Confluence — 팀 페이지 운영, 업무 프로세스·규정 문서 작성
-	•	Slack — AML/FDS 이슈 대응 커뮤니케이션 (경보 공유·피드백·대응 기록)
+## 🤝 Collaboration & Workflow
+
+- **Jira** — 티켓 생성·하위 작업·우선순위 설정·프로세스 기반 이슈 관리  
+- **Confluence** — 팀 페이지 운영, 업무 프로세스·규정 문서 작성  
+- **Slack** — AML/FDS 이슈 대응 커뮤니케이션 (경보 공유·피드백·대응 기록)
 
 ⸻
 
