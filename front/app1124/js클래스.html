@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        /* javascript의 정식명칭은 ECMAscript이다
+        2015년도에 발표된 ES6부터는 클래스, 상속 등을 지원함 
+        React, Vue 프레임웍에 객체가 사용됨
+        */
+
+        let age = 6;//{브레이스}에 소속되지 않아 전역변수 
+        function move(){}
+
+        class Dog{
+            // 자바와 약간 틀림. 멤버변수를 constructor()생성자 메서드에 선언해야함
+            constructor(){
+                this.age = 5 ; //객체지향이니 클래스 소속
+            }
+            // 아래의 함수는 Dog클래스에 소속되므로, 함수라해도되지만 객체지향언어에서는 이 객체의 동작방식을 결정한다고 해서 Method라 함
+            getAge(){
+                return this.age;
+            }
+        }
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
