@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            width: 800px;
+            height: 650px;
+            background-color: beige;
+            margin: auto;
+            display: flex;
+
+        }
+
+        .aside{
+            width: 150px;
+            background-color: blanchedalmond;
+
+        }
+
+        .aside input{
+            width: 90%;
+        }
+
+        .content{
+            width: 650px;
+            background-color: burlywood;
+        }
+
+
+    </style>
+
+
+</head>
+<body>
+    <div class ="container">
+        <div class = "aside">
+            <input type="text" id = "name" placeholder="이름">
+            <input type="text" id = "email" placeholder="이메일">
+            <input type="text" id = "job" placeholder="직업">
+            <button type = "button" id="bt">등록</button>
+        </div>
+        <div class = "content"></div>
+
+
+    </div>
+</body>
+<script>
+    // 한사람에대한 정보를 담기위한 용도로 일차원 배열도 훌륭한 방법이긴하지만..
+    // OOP에서는 데이터에 이름을 붙일수있기때문에(멤버변수) 직관성이 뛰어나다 
+    // 사람에게 친숙한 데이터를 다룰 수 있다
+    // let member=["gr",13,true]; 
+    // let member= {
+    //     name:"gr"
+    //     , age : 13 
+    //     , isMarried: false 
+    // }
+
+    let memberList=[];
+    // 회원 모을 배열 
+
+    function getList(){
+        // 문서 내의 content라는 클래스를 갖는 요소의 innerHTML, innerText 
+        let tag ="";
+        tag+="<table border ='1px' width='100%'>";
+        tag+="<thead>"
+        tag+="<tr>"
+        tag+="<th>이름</th>"
+        tag+="<th>이메일</th>"
+        tag+="<th>직업</th>"
+        tag+="</tr>"
+        tag+="</thead>"
+        tag+="<tbody>"
+            
+        // 반복 
+        for(let i = 0; i < memberList.length; i++){
+            tag+="<tr>"
+            tag+="<td>" + memberList[i]["name"] +"</td>"
+            tag+="<td>" + memberList[i]["email"]+"</td>"
+            tag+="<td>" + memberList[i]["job"]+"</td>"
+            tag+="</tr>"
+        }
+        //
+        tag+="</tbody>"
+        tag+="</table>";
+
+        document.querySelector(".content").innerHTML=tag;
+    }
+
+    function regist(){
+        // 함수 호출하면 좌측 입력폼에 데이터를 이용하여 회원 1명의 인스턴스를 메모리에 올려 
+        // 회원들을 모아놓을 1차원 배열에 누적
+         
+        let member= {}; //주의. 이 선언은 클래스 아니고 선언 자체가 인스턴스 
+        member["name"]= document.getElementById("name").value ;
+        member["email"]= document.getElementById("email").value;
+        member["job"]= document.getElementById("job").value; 
+
+        memberList.push(member);//일차원 배열에 회원 인스턴스 추가 
+
+        getList();
+
+    }
+    //2015년 발표된 JS버전을  ES6(클래스,상속)
+    addEventListener("load", function(){
+        document.getElementById("bt").addEventListener("click",function(){
+            // 회원등록 작성 
+            regist();
+        })
+    })
+    
+</script>
+</html>
