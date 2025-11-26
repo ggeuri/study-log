@@ -74,7 +74,7 @@
 | 2025-11-23 | src/main/java/com/amlengine/rule/impl/IO003RapidWithdrawRule.java | IO-003 룰이 다른 uid까지 함께 카운트되어 오탐 발생 | history 전체에서 uid 구분 없이 출금 건수 집계 → match()에서 tx.uid와 다른 uid는 skip하도록 필터 추가, 샘플 CSV 3개 시나리오(2001/2002/2003)로 재검증 후 정상 동작 확인 |
 | 2025-11-24 | /opt/mysql8, /lib/aarch64-linux-gnu/libaio.so.1* | MySQL 8 tar 설치 후 `mysqld --initialize` 시 libaio 관련 에러로 초기화 실패 | ARM(Ubuntu on M1/M2) 환경에서 `libaio.so.1t64`만 존재해 MySQL이 `libaio.so.1`을 찾지 못함 → `/lib`·`/usr/lib`에 `libaio.so.1t64`를 가리키는 심볼릭 링크 생성 후 `sudo ldconfig` 실행, `/opt/mysql8/data` 권한 재설정 및 `mysqld --initialize` 재실행으로 정상 초기화 확인 | 
 | 2025-11-25 | Ubuntu VM `/opt/mysql8`, `/etc/profile.d/mysql8.sh` | Ubuntu 24 ARM 환경에서 MySQL 8을 tarball로 설치한 뒤, Mac에서 `mysql -h <VM IP>` 접속을 시도하면 연결이 되지 않음 | 초기 상태에서 root 계정은 `localhost`만 허용되고, 3306 포트도 방화벽(ufw)으로 막혀 있었음. → VM 내부에서 `create user 'servlet'@'%' identified by '1234';` 및 `grant all privileges on java.* to 'servlet'@'%'; flush privileges;`로 원격 접속용 계정 생성 후, `sudo ufw allow 3306/tcp`로 포트를 개방. Mac 터미널에서 `mysql -h <VM IP> -u servlet -p` 명령으로 원격 접속 테스트까지 성공. |
-
+| 2025-11-26 | javaEE_workspace/notice (WEB-INF/lib, ROOT.war 배포 관련) | 리눅스 서버에서 /notice/list.jsp 접속 시 HTTP 500 오류 발생 | 배포한 WAR 안에 MySQL JDBC 드라이버가 포함되지 않아 `com.mysql.cj.jdbc.Driver` 클래스를 찾지 못함. 로컬의 `mysql-connector-j-8.0.33.jar`를 `src/main/webapp/WEB-INF/lib/`에 복사 후, `find + javac`로 다시 컴파일하고 `jar cvf`로 `ROOT.war`를 재생성하여 `/opt/tomcat9/webapps/`에 덮어쓰기 → Tomcat 재기동 후 정상적으로 게시판 목록 페이지 출력되는 것 확인. |
 ⸻
 
 🔗 Personal Project
