@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<style>
+    .container {
+        display: flex;
+        width: 1500px;
+        height: 700px;
+        background-color: aquamarine;
+
+    }
+
+    .aside{
+        width: 200px;
+        height: 100%;
+        background-color: rgb(67, 24, 65);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+    }
+
+    .aside * {
+        width: 90%;
+        margin-bottom: 3px;
+    }
+
+    .aside img { 
+        width: 90%;
+        height: 100px;
+    }
+
+    textarea{
+        height: 150px;
+    }
+
+    .content{
+        width: 1300px;
+        height: 100%;
+        background-color: black;
+
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    let foodName = ["치킨","만두","디저트","피자"]; // <option>예정</option>
+    let iconArray=["chick.png","dump.png","ice.png","pizz.png"] ; // <option value = 예정></option> 
+    let mapProp; //위도경도 전역변수 - 함수접근 
+    let map; // 맵 자체 
+    let storeList = []; //브라우저 닫을때까지는 상점들 모아놓기 
+
+    function init(){
+        //마커를 동적으로 채우기 
+        // icon이라는 아이디로 메모리에 올라온 select DOM의 자식요소인 option DOM을 동적으로 생성하여 select DOM에 부착
+        let icon = document.getElementById("icon")
+        
+        for(let i = 0 ; i < iconArray.length ; i++) { 
+            let op = document.createElement("option");
+            op.text = foodName[i];
+            op.value = iconArray[i];
+            icon.add(op);   
+        }
+
+        //완성된 select 박스에 change 이벤트 적용해보기 이미지바꿔야하니까 
+
+        icon.addEventListener("change", function(){
+            // alert("당신 선택은 " + icon.value); 
+            //alert("당신 선택은 " + this.value);  // this는 이벤트 일으킨 주체 icon select DOM
+            // 문서내의 pic img DOM의 src 속성값을 this.value로 교체 
+            document.getElementById("pic").src="../images/marker/"+this.value;
+
+        });
+
+        // 화면에 구글맵 랜더링하기 
+        mapProp= {
+        center:new google.maps.LatLng(37.61369, 127.0650),
+        zoom:16, // 값이 커질수록 확대 
+        };
+        map = new google.maps.Map(document.getElementById("content"),mapProp);
+
+        // addMarker(map,mapProp.center,document.getElementById("pic").src,store_name+store.info);
+
+        
+    }
+    
+    // 지금 떠있는 구글맵에 마커 추가 
+    // 매개변수  map = 기존에 떠있는 구글맵 객체
+    //  매개변수 position = 위도 경도 가진 객체 
+    function addMarker(map, position,path, msg){
+        let marker = new google.maps.Marker({
+            position: position,
+            animation:google.maps.Animation.BOUNCE,
+            icon:{//아이콘에 대해 경로만 적용하는 것이 아니라 더 많은 속성 설정위해 객체 표현 
+                url: path
+                , scaledSize : new google.maps.Size(50,40)
+            }
+        });
+        marker.setMap(map); 
+
+        //사용중인 마커에 정보창 띄우기 
+        let infowindow = new google.maps.InfoWindow({
+            content:msg});
+
+        infowindow.open(map,marker);
+    }
+
+ 
+
+    // 맛집등록 
+    function regist(){
+        // 현실의 한 상점을 표현하기 위해서 OOP 객체 활용
+        // 클래스로 정의해도되지만 단순데이터저장용이라면 굳이 로직 작성할수있는 매서드 지원하는 클래스까지 정의할 필요없이 인스턴스 바로 사용할 수 있는 js 고전적 객체 활용
+        // JQuery 문법구조는 $누구를 CSS선택자 그대로 이용.어떻게(매서드)
+        let store = {
+            store_name:$("#store_id").val()
+            , latlng:$("#latlng").val()
+            , url:$("#url").val()
+            , icon:$("#icon").val()
+            , info:$("#info").val()
+        }; 
+
+        
+
+        //전역변수로 선언된 storeList에 상점 추가 
+        console.log("방금 등록한 상점은", store); //JS배열은 java언어에서 java.util.List와 흡사함 
+        storeList.push(store);
+
+        // 유저가 입력한 위도경도문자열을 ,쉼프 기준으로 나누고 특히 공백제거 
+        let arr = store.latlng.split(",");
+
+
+
+        // 기존에 고정된 위도경도쓰지말고 위도경도 처리하는 객체 새롭게 생성 
+        let pos = new google.maps.LatLng(parseFloat(arr[0].trim()),parseFloat(arr[1].trim()));
+        
+        addMarker(map,pos,document.getElementById("pic").src,store.store_name+"<br>"+store.info);
+
+    }
+
+</script>
+
+</head>
+
+<body>
+    <div class = "container">
+        <div class = "aside">
+            <input type="text" id = "store_id" placeholder="상호명">
+            <input type="text" id = "latlng" placeholder="위도 경도">
+            <input type="text" id = "url" placeholder="URL">
+            <select id="icon">
+                <option value="">마커 선택</option>
+            </select>
+            <img id = "pic">
+            <textarea name="" id="info"></textarea>
+            <button onclick="regist()">등록</button>
+        </div>
+        <div class = "content" id = "content"></div>
+    </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=APIKEY&callback=init"></script>
+</body>
+</body>
+</html>

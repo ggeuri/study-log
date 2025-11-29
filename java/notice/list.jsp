@@ -5,7 +5,7 @@
 <%@ page import="java.sql.DriverManager"%>
 <%@ page import="java.sql.Connection"%>
 <%!// ! 를 붙이면 선언부이다. (선언부란? 이 jsp 가 서블릿으로 전환될 때 멤버변수와 멤버메서드가 정의되는 영역.  )
-	String url = "jdbc:mysql://localhost:3306/java ";
+	String url = "jdbc:mysql://localhost:3306/java";
 	String user = "servlet";
 	String pass = "1234";
 
