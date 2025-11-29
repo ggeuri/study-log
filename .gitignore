@@ -34,3 +34,5 @@ replay_pid*
 **/out/
 **/*.class
 **/*.war
+# Eclipse workspace metadata
+**/.metadata/
