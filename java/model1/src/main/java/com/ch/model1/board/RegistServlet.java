@@ -38,7 +38,7 @@ public class RegistServlet extends HttpServlet{
 		//DB연동 
 		boardDAO.insert(board);
 		
-		
+		response.sendRedirect("/board/list.jsp");
 		
 		
 		

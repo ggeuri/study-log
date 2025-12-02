@@ -53,27 +53,76 @@ public class BoardDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			if(pstmt!=null) {
-				try {
-				pstmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}}
-			//주의 : 기존 JDBC코드는 다 사용하면 닫았지만 풀로부터 얻어온 커넥션은 닫으면 안됨 . 
-			if(con!=null)
-				try {
-					con.close();
-				 //이 객체는 DataSource 구현체로부터 얻어온 Connection이기때문에 일반적 JDBC close()가 아님 
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			pool.freeConnection(con, pstmt,rs);
 		}
 		return list ; 
 	}
 	
-	public void update() {
+	//레코드 한건 
+	public Board select(int board_id) {
+		//쿼리 실행을 하기위한 데이터베이스 접속은 현재 코드에서 시도하말고 서버가동과 동시에 확보해놓은 커넥션풀로부터 가져오자 
+		Connection con = pool.getConnection(); 
+		PreparedStatement pstmt = null ; 
+		ResultSet rs = null; 
+		Board board = new Board();
+		
+		
+		
+		try {
+			String sql = "select * from board where board_id = ? ";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1,board_id);
+			
+			rs = pstmt.executeQuery(); 
+			//rs가 죽어도 상관없으려면 게시물 1건을 표현할 수 있는 대체제 사용 
+			//DB의 레코드 1건은 java DTO 인스턴스 1개와 매핑
+			if(rs.next()) {
+				board.setBoard_id(rs.getInt("board_id"));
+				board.setTitle(rs.getString("title"));
+				board.setWriter(rs.getString("writer"));
+				board.setContent(rs.getString("content"));
+				board.setRegdate(rs.getString("regdate"));
+				board.setHit(rs.getInt("hit"));
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			pool.freeConnection(con, pstmt, rs);
+			
+		}
+		
+		return board; 
+		
+	}
+	
+	//레코드 한건 수정 
+	public int update(Board board) {
+		Connection con =null; 
+		PreparedStatement pstmt = null; 
+		String sql = "update board set title=?, writer=?, content=? where board_id = ?";
+		int result = 0; 
+		
+		con=pool.getConnection();
+		
+		try {
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, board.getTitle());
+			pstmt.setString(2, board.getWriter());
+			pstmt.setString(3, board.getContent());
+			pstmt.setInt(4, board.getBoard_id());
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);		
+		}
+		return result ;
 		
 	}
 
@@ -127,6 +176,32 @@ public class BoardDAO {
 		
 		}
 		return result ;
+	}
+	
+	public int delete(int board_id) {
+		Connection con = null;
+		PreparedStatement pstmt = null; 
+		int result = 0 ; 
+		
+		String sql = "delete from board where board_id = ?";
+		
+		con = pool.getConnection();
+		
+		try {
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, board_id);
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally { 
+			pool.freeConnection(con, pstmt);
+		}
+		
+		return result; 
+		
+		
 	}
 
 }

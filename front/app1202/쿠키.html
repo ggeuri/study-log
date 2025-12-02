@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 쿠키 : 브라우저가 저장한 문자열 데이터
+
+    쿠키의 유형 (분류기준 : 쿠키 생성 시 유효기간 지정 expires/max-age = 영구, 반대가 세션쿠키(브라우저 프로세스 종료시 자동삭제)) 
+    세션쿠키 : 저장소 - 메모리(프로세스 종료 시 사라짐) 
+    영구적 쿠키 : 저장소 - 디스크 
+
+    쿠키의 데이터형식
+    쿠키에 넣는 모든 데이터는 문자열로 들어감. 따라서 쿠키에 들어간 특정 데이터 추출하려면 String 메서드 활용  -->
+
+    <script>
+        
+        document.cookie="name=ㄱㄹ; max-age=2400";
+        document.cookie="email=naver; max-age=2400";
+        
+        // 쿠키 데이터 문자열이니까 함수로 정의해놓고 재사용   
+        function getCookie(target){
+            let arr=document.cookie.split("; ");
+            for(let i = 0 ; i < arr.length; i++){
+                let kv=arr[i].split("=");
+                if(kv[0]==target){
+                    return kv[1];
+                }
+            }
+        }
+
+        // 선언적 프로그래밍 : 반복문 수행시 개발자가 반복의 과정 제어하지말고 오히려 무엇할지 집중할 수 있도록 지원하는 프로그래밍 방식
+        // 함수형 프로그래밍 : 원본 데이터 건드리지않고 배열 등 새로운 데이터 반환하여 처리함
+        // 고차함수형 프로그래밍 : 매개변수로 함수도 가능한 함수정의법  
+
+        // 전통적 방식 : 개발자가 몇부터 몇까지 지정 
+        // 선언적 방식 : 반복해라 
+
+        function getCookie2(target){
+            return (
+                document.cookie.split("; ")
+                .find(row => row.startsWith(target))
+                .split("=")[1]
+            );
+        }
+
+        function getCookieBySubstring(target) {
+            let text = document.cookie;     
+            let i = text.indexOf(target);   
+
+            if (i === -1) {
+                return null; 
+            }
+
+            let start = i + target.length;
+
+            let end = text.indexOf(";", start);
+
+            if (end === -1) {
+                return text.substring(start);
+            } else {
+                return text.substring(start, end);
+            }
+        }   
+
+// 사용 예시
+document.cookie = "name=ㄱㄹ; max-age=2400";
+document.cookie = "email=naver; max-age=2400";
+
+console.log(getCookieBySubstring()); // "naver"
+
+        getCookie("email");
+
+
+        
+        // let text = document.cookie;
+        // let i = index.of("email=");
+        
+        // text.substring(i); 
+        
+    </script>
+
+</body>
+</html>

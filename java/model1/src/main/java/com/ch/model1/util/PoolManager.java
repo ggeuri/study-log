@@ -1,6 +1,8 @@
 package com.ch.model1.util;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.naming.InitialContext;
@@ -30,4 +32,58 @@ public class PoolManager {
 		} 
 		return con; 
 	}
+	
+	public void freeConnection(Connection con) {
+		if(con!=null) {try {
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}}	
+	}
+	public void freeConnection(Connection con, PreparedStatement pstmt) {
+		if(pstmt!=null) {try {
+			pstmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}}	
+
+		if(con!=null) {try {
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}}	
+		
+	}
+	
+	public void freeConnection(Connection con, PreparedStatement pstmt, ResultSet rs) {
+		if(rs!=null) {try {
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}}	
+	
+		if(pstmt!=null) {try {
+			pstmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}}	
+	
+		if(con!=null) {try {
+			//주의 : 기존 JDBC코드는 다 사용하면 닫았지만 풀로부터 얻어온 커넥션은 닫으면 안됨
+			//이 객체는 DataSource 구현체로부터 얻어온 Connection이기때문에 일반적 JDBC close()가 아님 
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}}	
+		
+		
+	}
+	
+
 }
