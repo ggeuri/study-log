@@ -1,0 +1,73 @@
+<script src="../lib/util.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    document.cookie="id=batman; max-age=60*5";
+    document.cookie="email=naver; max-age=60*5";
+    document.cookie;
+    getCookie("email");
+
+    let member={
+        id: "gr"
+        , email: "naver"
+        , name: "geurimu"
+    };
+
+    document.cookie=member; 
+    
+    document.cookie = "id=; max-age=0"; //삭제..인데 
+    [object Object] < 이런식으로 넣으면 id가 없다 
+
+    document.cookie= "[object Object]; max-age=0"; // 키값이 없으면 밸류 자체를 지워야함. 근데 이러면 안된다..! 
+
+    쿠키는 문자열만 받아들임. 객체 자체를 넣으려면 ? 문자열 찢어서 넣어야지 뭐 
+
+    let member2="{id:'grs', email:'naver', age=28}"; //왜 한줄아님안들어가냥
+
+    document.cookie=`user=${member2}; max-age=300`;
+
+    getCookie("user");
+
+    let data = document.getCookie("user");
+
+    쿠키는 원칙상 문자열만 넣을 수 있기때문에 개발자가 주로 다루는 객체 자체를 넣을 수 없다. 넣어도 "[object Object]"라는 올바르지 않은 문자열로 들어감 
+
+    해결책? 개발자가 다루고 있는 js의 객체 리터럴을 일단 쌍따옴표로 감싸서 문자열화시켜 쿠키에 넣어야한다. 하지만 추후 쿠키에 다음 문자열화된 객체를 다시 객체로 복원시켜야함
+    반드시 JSON표기법을 따라야한다 . 
+
+    JSON? 문자열임. 단 이 문자열 작성이 JS의 객체 리터럴 표기법을 따른다고 하여 'J'ava'S'cript 'O'bject 'N'otation이라한다 JSON..
+
+    //문자열이지만 객체리터럴과 비슷하게 생긴 json...
+    let json="{id:'geuri', email:'naver'}";
+    
+    json validator : https://jsonlint.com/ 
+    
+    json 공식 표기법 
+    let json="{'id':'geuri', 'email':'naver'}";
+
+    {"id":"geuri", "email":"naver"} << 이게 valid네 .. 객체리터럴과 유사하게생겼지만 키값도 별도로 감싸야함 "{}" "id":"sfd"
+    let json="{\"id\":\"geuri\", \"email\":\"naver\"}";
+    document.cookie="user="+json+ ";max-age = 300";
+    document.cookie;
+    getCookie("user");
+    let obj=getCookie("user");
+
+    //객체로 만들어줘야함... 
+    let m=JSON.parse(obj);
+    m;
+    m.email;
+
+
+    
+
+
+
+
+    
+</body>
+</html>

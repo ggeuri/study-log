@@ -89,7 +89,7 @@ for(int i = 0 ; i < pageSize ; i++ ){
 	<td colspan="4"><%for (int i = firstPage ; i<=lastPage;i++){ %>
 	<a href="/board/list.jsp?currentPage=<%=i%>">[<%=i%>]</a>
 	<%} %>
-</td>
+	</td>
 </tr>
 </table>
 </body>

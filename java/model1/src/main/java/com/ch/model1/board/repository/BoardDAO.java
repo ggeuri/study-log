@@ -16,8 +16,8 @@ import com.ch.model1.util.PoolManager;
 
 // 데이터베이스의 Board table에 대한 CRUD를 수행하는 객체 
 public class BoardDAO {
-	PoolManager pool = new PoolManager() ; 
-	
+	PoolManager pool = PoolManager.getInstance();
+	 
 	public List<Board> selectAll() {
 		//커넥션 얻는 코드를 이 메서드에서 손수하지말자 PoolManager가 대신 해주니 
 		Connection con = pool.getConnection(); // 풀매니저로부터 커넥션 객체 얻어옴 

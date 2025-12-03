@@ -12,8 +12,11 @@ import javax.sql.DataSource;
 // DAO 각 메서드마다 커넥션풀로부터 Connection을 얻어오는 코드를 중복작성할 경우 유지보수성 떨어짐 
 //따라서 앞으로는 커넥션풀로부터 커넥션을 얻거나 finally 반납하는 중복 코드는 아래의 클래스로 처리하면 유지보수성이 올라감 
 public class PoolManager {
+	private static PoolManager instance ; 
 	DataSource ds ; 
-	public PoolManager() {
+
+	
+	private PoolManager() {
 		try {
 			InitialContext context = new InitialContext();
 			ds = (DataSource) context.lookup("java:comp/env/jndi/mysql");
@@ -21,9 +24,16 @@ public class PoolManager {
 			e.printStackTrace();
 		} 
 	}
+	
+	public static PoolManager getInstance() {
+		if(instance==null) instance = new PoolManager();
+		return instance ; 
+	}
 	//외부의 DAO 들이 직접 Connection 작성안하려면 여기서 Connection 얻어와서 반환 
 	
 	public Connection getConnection() {
+		//클래스 변수인 instance 변수에 아무것도 존재하지 않을때는 아직 인스턴스 없는거니 그때 한번만 new 
+		//싱글톤선언시 수많은 DAO들이 PoolManager를 매번 생성하는 낭비 방지가능 
 		Connection con =null; 
 		try {
 			con =  ds.getConnection();
