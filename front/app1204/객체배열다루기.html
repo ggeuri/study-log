@@ -1,0 +1,30 @@
+<script>
+    //다수의 객체리터럴을 JSON문자열로 다루는 법 
+
+    let memberList=[{
+        id:"cat",
+        name:"영희",
+        age:28,
+        pets:[{
+            name:"뽀미",
+            age : 3 ,
+            type:"말티즈"
+
+        }, {
+            name:"야옹",
+            age : 2 ,
+            type:"샴" }]
+    },{
+        id:"batman",
+        name:"철수",
+        age:22
+    }]; 
+
+    let data = JSON.stringify(memberList);
+
+    let obj = JSON.parse(data);
+
+
+
+
+</script>

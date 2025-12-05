@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+<style>
+    body {
+        background: #f5f5f5;
+    }
+
+    .container {
+        height: 500px;
+        display: flex;
+        width: fit-content;
+        margin: 0 auto;
+        background: #fff;
+    }
+
+    .aside {
+        width: 160px;
+        border-right: 2px solid #aaa;
+        box-sizing: border-box;
+    }
+
+    .aside input {
+        width: 98%;
+        box-sizing: border-box;
+        margin: 5px auto;
+        display: block;
+    }
+
+    .aside button {
+        width: 48%;
+        box-sizing: border-box;
+        margin: 5px auto;
+    }
+
+    .content {
+        width: 500px;
+    }
+</style>
+
+<script>
+//목록을 출력하는 작업은 등록할때만이 아니라 유저가 처음 브라우저로 main.html을 요청한 시점부터도 목록이 나와야함 
+// → 즉, "페이지 최초 로딩 시점에도 서버에서 데이터(회원 목록)를 가져와서 테이블로 렌더링해야 한다"는 의미.
+// 목록 기능은 재사용가능성이 높다 따라서 함수로 별도정의 
+// → 목록을 여러 상황(초기 로딩, 등록 후 갱신 등)에서 공통으로 쓰기 위해 render() 함수로 분리.
+
+function render(list) {
+    console.log("전달받은 배열은 ", list);
+
+    // list : 서버에서 받은 JSON 배열 (자바스크립트 객체 배열)
+    // 각 요소는 { id: "...", name: "...", email: "..." } 형태라고 가정.
+
+    let tag = "<table width='100%' border='1px'>";
+    tag += "<thead>";
+    tag += "<tr>";
+    tag += "<th>ID</th>";
+    tag += "<th>Name</th>";
+    tag += "<th>Email</th>";
+    tag += "</tr>";
+    tag += "</thead>";
+    tag += "<tbody>";
+
+    for (let i = 0; i < list.length; i++) {
+        // list[i] : i번째 회원 객체
+        tag += "<tr>";
+        tag += "<td>" + list[i].id + "</td>";
+        tag += "<td>" + list[i].name + "</td>";
+        tag += "<td>" + list[i].email + "</td>";
+        tag += "</tr>";
+    }
+
+    tag += "</tbody>";
+    tag += "</table>";
+
+    //렌더링 
+    // → 완성된 HTML 문자열(tag)을 .content 영역에 집어넣어 테이블을 화면에 출력.
+    $(".content").html(tag);
+}
+
+//서버에 목록 요청(비동기적)
+// → DB에 있는 회원 목록을 비동기(AJAX) 방식으로 요청하고, 응답을 받아 화면에 뿌려주는 역할.
+function getList() {
+    //비동기요청담당 XMLHttpRequest
+    // → 순수 자바스크립트에서 AJAX를 담당하는 기본 객체 (jQuery의 $.ajax()와 비슷한 역할).
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onload = function () {
+        //서버 응답 도달시 지정한 익명함수 호출 (by javascript)
+        // → 서버가 응답을 모두 보내고 HTTP 통신이 정상 종료되면 onload에 등록된 이 함수가 자동 호출된다.
+
+        //서버에서 전송한 json문자열 파싱하여 화면에렌더링 
+        // → this.responseText : 서버가 보낸 JSON 문자열(예: "[{...},{...}]")
+        console.log("서버응답데이터: ", this.responseText);
+
+        // JSON 문자열을 자바스크립트 객체(배열)로 변환
+        let memberList = JSON.parse(this.responseText);
+
+        // 변환된 배열을 이용해 테이블을 그리는 함수 호출
+        render(memberList);
+    };
+
+    xhttp.open("GET", "/ajax/async_list.jsp"); //요청준비 
+    // open(HTTP 메서드, URL)로 요청 설정만 해 두고, 실제 전송은 send()에서 수행.
+    xhttp.send();
+}
+
+// 회원 등록 요청을 서버로 전송하는 함수
+function regist() {
+    //서버에 요청시도, 비동기 
+    // → 폼을 submit해서 페이지를 새로고침하는 대신, AJAX로 백그라운드에서 등록 요청을 보냄.
+    let xhttp = new XMLHttpRequest(); //비동기통신객체
+
+    xhttp.onload = function () {
+        //서버에서 응답정보 도착하면 호출되는 익명함수. (역할 = 콜백함수)
+        // → 등록 결과(성공/실패 여부 등)가 도착했을 때 실행되는 부분.
+/*
+        let memberList = JSON.parse(this.responseText); 
+        console.log("memberList는", memberList);
+        
+        render(memberList);
+        // 위 코드는 "등록 응답으로 목록 전체를 다시 보내주는 방식"을 쓸 때 사용할 수 있는 예시.
+        // 현재는 서버에서 단순히 "등록완료" 같은 응답만 보낸다고 가정하고 주석 처리해 둠.
+*/
+        console.log("등록완료");
+        getList(); 
+        // 현재 코드는 등록 완료 메시지만 확인하고, 목록 갱신은 따로 호출하지 않는 구조.
+        // (필요하다면 여기서 getList()를 호출해 목록을 새로고침할 수 있음.)
+    };
+
+    xhttp.open("POST", "/ajax/async_regist.jsp"); //요청방법 및 요청주소지정
+    //전송시 헤더지정 
+    // → 폼에서 submit하는 것과 같은 형태의 body를 보내기 위해 URL-encoded 타입으로 설정.
+    xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+
+    //비동기 요청 출발(브라우저에게 시킴) 대기없고 순서없으니 비동기. 브라우저가 응답받아오면 자바스크립트에게 알림 
+    // → send()를 호출한 직후 자바스크립트는 기다리지 않고 다음 코드로 진행.
+    //    실제 네트워크 통신은 브라우저(백그라운드)가 담당하고,
+    //    응답이 도착하면 xhttp.onload에 등록된 콜백 함수를 호출.
+    // 이때 JS는 자바스크립트의 XMLHttpRequest의 onload속성에 지정한 익명함수인 콜백함수 호출 
+    // → 결국 "비동기"라는 것은 요청과 응답 처리(콜백 실행)가 시간적으로 분리된다는 뜻.
+
+    xhttp.send(
+        "id=" + $("input[name='id']").val()
+        + "&name=" + $("input[name='name']").val()
+        + "&email=" + $("input[name='email']").val()
+    );
+}
+
+$(() => {
+    // 문서가 모두 로드된 후에 실행될 초기 설정 영역 (jQuery의 DOM ready)
+    $("button").click(() => {
+        // aside 영역에 있는 '등록' 버튼 클릭 시 regist() 호출 → 서버로 AJAX 등록 요청 전송.
+        regist();
+    });
+
+    //문서가 로드되면 누적된 데이터를 비동기적으로 가져오자 
+    // → 페이지 처음 열릴 때 DB에 이미 있던 회원 목록을 가져와 테이블로 표시.
+    getList();
+});
+</script>
+</head>
+<body>
+    <div class="container">
+        <div class="aside">
+            <form id="form1">
+                <input name="id" type="text" placeholder="Your id">
+                <input name="name" type="text" placeholder="Your name">
+                <input name="email" type="text" placeholder="Your email">
+                <button type="button">등록</button>
+            </form>
+        </div>
+        <div class="content">
+        </div>
+    </div>
+</body>
+</html>

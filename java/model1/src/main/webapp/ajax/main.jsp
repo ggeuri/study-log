@@ -43,7 +43,7 @@ Member2DAO dao = new Member2DAO();
     .content{
         width: 500px;
         height: 100%;
-        background-color: rgb(122, 122, 122);
+        background-color: rgb(255, 255, 255);
     }
 </style>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -66,9 +66,14 @@ Member2DAO dao = new Member2DAO();
 			// 전세계적으로 xml, json 
 			
 			//전세계 개발자들이 주로 사용하는 표준형식 데이터 사용하자 (json). 어떤 문자열이 JSON표기법 준수하여 작성되어있다면 JS는 내장객체인 JSON내장객체를 이용하여 문자열을 실제 해석하여JS객체리터럴로 전환 
-			let obj = JSON.parse(xhttp.responseText); //JSON구분형식맞으면 전환해줌 
-			console.log("email은 ", obj.email);
+			let memberList = JSON.parse(xhttp.responseText); //JSON구분형식맞으면 전환해줌 
 			//정말로 obj가 자바스크립트의 인스턴스라면 객체.속성 접근가능해야함 
+			console.log("서버가 보낸 문자열을 파싱한 결과 ", memberList);
+			//서버가 보내온 데이터가 다행히도 JSON표기법 준수했으므로, 지금부터 객체화시켜서 화면에 렌더링 
+			
+			
+			
+			
 
 		}
 		

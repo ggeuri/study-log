@@ -1,0 +1,40 @@
+<script src="../lib/util.js"></script>
+<script>
+/*
+oop에서는 데이터를 다룰 때 주로 객체 표현함. 쿠키에 객체 넣기 
+문제점 : 쿠키는 문자열이기때문에 객체를 넣어도 문자열로 인식함. 
+
+let member = {
+    name : "냠냐미",
+    email : "google.com"
+}
+*/
+
+
+// 위에서 생성한 JS의 객체 리터럴을 쿠키에 넣어보자 
+
+// 쿠키 넣는 법 : document.cookie="key=value; option1; option2; max-age...등등"
+
+
+//member를 문자열로 바꿔보자 
+let member = {
+    name : "냠냐미",
+    email : "google.com"
+};
+
+let memberStr = JSON.stringify(member);  // JSON문법으로바꿔줌 
+document.cookie = `user=${memberStr}; max-age=300`;
+// let member = "{\"name\" : \"냠냐미\", \"email\" : \"google.com\"}";
+
+
+//넣을 때 user라는 키를 이용했으므로, 검색 또한 user라는 키 이용 
+let user = getCookie("user");
+ // 아직 문자열 상태 . 
+
+//꺼내온 결과 문자열이 자바스크립트의 객체리터럴과 매우 흡사, JSON표기도준수 = 변환자격획득 
+
+let data = JSON.parse(user);
+
+console.log("이름은 ", data.name, " 이메일은 ", data.email);
+
+</script>

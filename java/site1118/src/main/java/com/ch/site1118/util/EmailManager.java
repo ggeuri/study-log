@@ -21,7 +21,7 @@ import javax.mail.internet.MimeMessage;
 public class EmailManager {
 	String host ="smtp.gmail.com";//사용하고자하는 메일서버주소 
 	String user = "geurisbebe@gmail.com";//메일서버사용자계
-	String password = "dzrb acan qpvx dnjj";//앱비밀번호 
+	String password = "---------------";//앱비밀번호 
 	Properties props = new Properties(); //java.util.map 자식<key-value>
 	
 //	메일 발송 메서드 
