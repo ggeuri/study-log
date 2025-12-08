@@ -58,18 +58,68 @@ input[type=button]:hover {
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>
 <script>
+	function printList(commentList){
+		// 댓글 목록 출력함수 
+		let tag="<table width='100%' border='1px'>";
+		tag+="<thead>";
+		tag+="<tr>";
+		tag+="<th>No</th>";
+		tag+="<th>댓글내용</th>";
+		tag+="<th>작성자</th>";
+		tag+="<th>작성일</th>";
+		tag+="</tr>";
+		tag+="</thead>";
+		tag+="<tbody>";
+		let num = commentList.length; //게시물 수 담아놓고 -- 처리 
+		for(let i = 0; i < commentList.length ; i++){
+			let obj = commentList[i];
+			tag+="<tr>";
+			tag+="<td>"+(num--)+"</td>";
+			tag+="<td>"+obj.msg+"</td>";
+			tag+="<td>"+obj.reader+"</td>";
+			tag+="<td>"+obj.writedate+"</td>";
+			tag+="</tr>";
+		}		
+		tag+="</tbody>";
+		tag+="</table>";
+		$(".commentList").html(tag);
+		
+	}
+	
+	function getList(){
+	//댓글 목록 비동기로 가져오기 .. 상세페이지 들어왔을때도 호출, 실시간 댓글을 등록할 때도 호출 
+		let xhttp = new XMLHttpRequest();
+		
+		xhttp.onload=function(){
+			
+			let commentList = JSON.parse(this.responseText); //{\"resultMsg\":\"등록실패\"}는 문자열. json으로 바꾸고 키값으로 접근하면됨
+			console.log("변환객체는 ", commentList);
+			printList(commentList); 
+		}
+		xhttp.open("GET","/news/comment_list.jsp?news_id=<%=news_id%>");
+		xhttp.send();//목록요청 
+		
+	}
+
+
 	function registComment(){
 		//댓글을 비동기적으로 .............  
 		
 		let msg = $("input[name='msg']").val(); 
 		let reader = $("input[name='reader']").val(); 
+		let news_id = $("input[name='news_id']").val(); 
 		
 		let xhttp = new XMLHttpRequest();
 		xhttp.open("POST","/news/comment_regist.jsp");
 		//비동기적으로 POST 요청하려면 헤더 필요해용 
 		xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-		xhttp.send("msg="+msg+"&reader="+reader);//서버요청 
-		
+		//서버로부터 응답정보 도착했을때 익명함수 호출 
+		xhttp.onload=function(){
+			let obj = JSON.parse(this.responseText); //{\"resultMsg\":\"등록실패\"}는 문자열. json으로 바꾸고 키값으로 접근하면됨
+
+			getList(); //등록된 결과물마저도비동기 요청 
+		}
+		xhttp.send("msg="+msg+"&reader="+reader+"&news_id="+news_id);//서버요청 
 	
 	}
 
@@ -81,6 +131,8 @@ input[type=button]:hover {
 		});
 		
 		$("#summernote").summernote("code", "<%=news.getContent()%>");
+		
+		getList();
 		
 	});
 </script>
@@ -105,10 +157,13 @@ input[type=button]:hover {
   </form>
   <form action="">
   <div>
+  <input type="hidden" value = "<%=news.getNews_id()%>"  name = "news_id" >
   <input type="text" style="width:65%; background:white; " name = "msg" >
   <input type="text" style="width:20%; background:white;" name = "reader">
   <input type="button" value = "댓글등록" onClick="registComment()"></input>
-  
+  </div>
+ <!--  댓글목록............-->
+  <div class="commentList">  
   </div>
   
   </form>

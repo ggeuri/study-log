@@ -14,7 +14,7 @@ import java.io.BufferedReader;
 	public class Test {
 	    public static void main(String[] args) throws IOException {
 	        StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B553662/sghtngPoiInfoService/getSghtngPoiInfoList"); /*URL*/
-	        urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=key"); /*Service Key*/
+	        urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=40a750a8cc622bf66adba7314649f68b60d334218859b9f9ad29120816cf24d8"); /*Service Key*/
 	        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
 	        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*한 페이지 결과 수*/
 	        urlBuilder.append("&" + URLEncoder.encode("type","UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8")); /*응답 결과의 출력 방식을 xml, json 형태로 변환 제공될 수 있도록 함*/

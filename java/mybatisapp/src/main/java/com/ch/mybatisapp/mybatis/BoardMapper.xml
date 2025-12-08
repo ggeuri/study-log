@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ch.mybatisapp.dto.Board">
+<insert id="insert" parameterType = "com.ch.mybatisapp.dto.Board">
+<!-- DAO존재는 유지하되, JDBC 코드는 Mapper xml에 작성하고, 네임스페이스와 id 이용하여 간접적으로 쿼리 수행-->
+ Insert into board(title,writer,content) values (#{title},#{writer},#{content})
+ <!-- #{}는 dto의 멤버변수명임 -->
+ </insert>
+ 
+ <!--  아래의 쿼리문 수행 후 반환되는 레코드 !한건! 받을 DTO명시해야됨. LIST아님 LIST가 내장되어있음 알아서 옴 -->
+ <select id="selectAll" resultType = "com.ch.mybatisapp.dto.Board">
+ select board_id,title,writer,content,regdate,hit from board order by board_id desc 
+ </select>
+ 
+ <update id="update" parameterType = "com.ch.mybatisapp.dto.Board">
+ Update board set title=#{title}, writer =#{writer},content=#{content} where board_id=#{board_id}
+ </update>
+ 
+ <!--  주입시킬 파라미터가 1건이니까 DTO명시가 아니라 기본 자료형 사용하면 알아서 대입-->
+  <delete id="delete" parameterType = "int">
+ delete from board where board_id=#{board_id}
+ </delete>
+
+
+</mapper>

@@ -9,5 +9,5 @@ public class Comment {
 	private String reader; 
 	private String writedate; 
 	private int read_count; 
-	private News news_id ; 
+	private News news ; 
 }
