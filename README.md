@@ -83,6 +83,10 @@
 | 2025-12-05 | java/news & map (Google Maps main.html, NewsDAO, RegistServlet, list.jsp, content.jsp, PoolManager, AJAX comment) | 공공데이터(JSON)와 Google Maps API 연동 구조를 연습하면서, 단순 JSP에 DB연동·디자인·제어 로직이 섞여 유지보수와 재사용이 어려운 기존 패턴을 개선하고자 했음. | 지도 화면은 XMLHttpRequest로 /map/list.jsp에서 JSON을 받아 JSON.parse 후 render(data)에서 위도/경도를 추출해 map.setCenter, Marker, InfoWindow로 그리도록 하고, 뉴스 게시판은 write.jsp(폼) → RegistServlet → NewsDAO → list.jsp/content.jsp 순서로 흐름을 분리했으며, PoolManager 싱글톤으로 커넥션풀 접근을 공통화하고 PagingUtil로 서버 사이드 페이징을 적용한 뒤, content.jsp에서 AJAX로 댓글 등록 뼈대를 구현해 향후 CommentDAO 기반 비동기 댓글 기능까지 확장 가능한 구조로 설계함. |
 | 2025-12-08 | java/news (content.jsp, comment_regist.jsp, comment_list.jsp, CommentDAO)  | 뉴스 상세 페이지에서 댓글을 동기 폼 제출로만 처리해 새로고침이 발생하고, 자바 객체 리스트를 그대로 `out.print` 해서 JS 쪽에서 재사용하기 어렵고, FK `news_id`를 단순 int로만 다뤄 확장성이 떨어짐. | 뉴스 상세에서 `XMLHttpRequest`로 댓글 등록/목록을 비동기로 호출하고, `Comment`가 `News` 객체를 멤버로 보유하도록 설계해 `comment.getNews().getNews_id()`로 FK를 주입했다. 서버에서는 Jackson `ObjectMapper`로 `List<Comment>`를 JSON 문자열로 직렬화해 응답하고, 클라이언트에서는 `JSON.parse()`와 `printList()`로 테이블을 렌더링하여 새로고침 없이 댓글 등록/갱신이 가능한 구조로 개선했다. |
 | 2025-12-08 | java/mybatisapp (pom.xml, config.xml, MybatisConfig, BoardMapper, regist) | 게시판 CRUD를 순수 JDBC로 구현하면서 매번 `Connection`, `PreparedStatement`, SQL 문자열을 DAO에 직접 작성해 중복 코드가 많고, DB 접속 정보/SQL이 소스코드에 뒤섞여 유지보수가 어려움.         | `pom.xml`에 MyBatis와 MySQL 드라이버를 의존성으로 추가하고, `config.xml`에 DB 접속 정보와 mapper 설정을 분리했다. `MybatisConfig` 싱글톤으로 `SqlSessionFactory`를 한 번만 생성해 DAO에서 `getSqlSession()`으로 세션을 받아 쓰도록 만들고, `BoardMapper.xml`에 `insert/selectAll/update/delete` SQL과 DTO 매핑을 정의해 DAO는 `sqlSession.insert("네임스페이스.id", dto)`만 호출하는 얇은 레이어로 정리해, DB 변경이나 SQL 수정 시에도 Mapper만 수정하면 되는 구조로 리팩토링했다. |
+| 2025-12-10 | javaEE/mvcframework (Board MVC)     | Front Controller 기반 게시판에서 글 등록 후 새로고침 시 중복 등록 가능성(PRG 미적용), 목록→상세 이동 시 board_id 미전달, MyBatis 단건 조회 매핑 오류로 상세 페이지에 DTO가 전달되지 않음 | DispatcherServlet에 `isFoward()` 플래그를 두고 RegistController는 redirect(POST-Redirect-GET)로 변경, list.jsp에서 `board_id`를 쿼리스트링으로 전달, BoardDAO와 Mapper의 `select()`를 `Board.select` + `resultType=Board`로 수정하여 DetailController가 `Board` DTO를 받아 request에 저장하도록 구조 정리 |
+
+
+
 ⸻
 
 🔗 Personal Project

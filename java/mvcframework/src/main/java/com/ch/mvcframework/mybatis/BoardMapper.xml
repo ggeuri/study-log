@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Board">
+<!-- 글 한 건 등록  -->
+<insert id="insert" parameterType="Board">
+insert into board(title, writer, content) values(#{title},#{writer},#{content}); 
+</insert>
+
+<!-- select절 쓸 때, resultType으로 DTO명시해줘야 데이터매핑 자동으로해줌 
+(마이바티스) =  SQL Mapper
+hibernate, JPA = ORM  
+
+반환레코드 여러건이어도 알아서 넣음-->
+<select id="selectAll" resultType="Board">
+select board_id,title,writer,content,regdate,hit from board order by board_id desc; 
+</select>
+
+<select id="select" parameterType="int" resultType="Board" >
+select board_id,title,writer,content,regdate,hit from board where board_id = #{board_id};
+</select>
+
+
+
+
+</mapper>

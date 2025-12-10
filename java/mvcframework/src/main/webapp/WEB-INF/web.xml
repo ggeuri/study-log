@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	id="WebApp_ID" version="3.1">
+	<display-name>mvcframework</display-name>
+
+	<servlet>
+		<servlet-name>dispatcher</servlet-name>
+		<servlet-class>com.ch.mvcframework.controller.DispatcherServlet</servlet-class>
+
+		<!-- 이 서블릿 태어난 직후 호출되는 init() 생명주기 메서드에 전달할 매개변수 명시가능 
+		그리고 이 파라미터 변수와 값은 init()메서드의 매개변수로 전의된 ServletConfig로 전달됨 -->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>		
+			<param-value>WEB-INF/servlet-mapping.txt</param-value>
+		</init-param>
+
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dispatcher</servlet-name>
+		<!-- 앞의 경로가 뭐든 상관없고 단 확장자가 .do면 DispatcherServlet로 온다 -->
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+
+</web-app>

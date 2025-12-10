@@ -1,0 +1,16 @@
+#자바의 컬렉션 프레임워크 객체 중 Map 상속받은 Properties라는 객체는 Properties
+#어떤 데이터가 =을 기준으로 키와 밸류의 쌍으로 구성될 경우 좌측 키, 우측 밸류로 해석
+
+/movie.do = com.ch.mvcframework.controller.MovieController
+/food.do = com.ch.mvcframework.controller.FoodController
+/board/regist.do = com.ch.mvcframework.controller.RegistController
+/board/list.do = com.ch.mvcframework.controller.ListController
+/board/detail.do = com.ch.mvcframework.controller.DetailController
+
+
+#게시판 뷰페이지 매핑 
+#자바 코드 안에 뷰페이지명을 직접적으로 명시하게되면, 외부 파일의 명칭 달라질 경우 자바코드가 영향을 받게됨.
+#따라서 유지보수성을 위해서는 자바클래스안에 파일명 직접등록(하드코딩)금지 
+/board/regist/result = /board/list.do
+/board/list/result = /board/list.jsp
+/board/detail/result = /board/detail.jsp
