@@ -52,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
 	}
 	
 	protected void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("utf-8"); //추후 필터단계로 올릴예정 
+		
 		//클라이언트 요청방식 다양하니 아래의 메서드 하나로 몰아놓으면 코드는 메서드마다 작성할 필요없음 
 		System.out.println("클라이언트의 요청을 감지하였습니다 ! ");
 
@@ -98,7 +98,7 @@ public class DispatcherServlet extends HttpServlet {
 			String viewName = controller.getViewName();
 			String viewPage = props.getProperty(viewName);
 			
-			if(controller.isFoward()) {
+			if(controller.isForward()) {
 				RequestDispatcher dis = request.getRequestDispatcher(viewPage);
 				dis.forward(request, response);
 

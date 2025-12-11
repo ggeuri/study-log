@@ -43,7 +43,7 @@ public class RegistController implements Controller{
 	}
 
 	@Override
-	public boolean isFoward() {
+	public boolean isForward() {
 		// 얘는 false일까 true일까? 
 		return false; // 글 쓴 후에는 false다 !포워딩아니고 재접속해라 
 	}

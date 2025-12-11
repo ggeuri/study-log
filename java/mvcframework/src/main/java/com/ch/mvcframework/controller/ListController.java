@@ -32,7 +32,7 @@ public class ListController implements Controller{
 	}
 
 	@Override
-	public boolean isFoward() {
+	public boolean isForward() {
 		// jsp까지 살려서 가져갈데이터있다? 포워딩 
 		return true;
 	}

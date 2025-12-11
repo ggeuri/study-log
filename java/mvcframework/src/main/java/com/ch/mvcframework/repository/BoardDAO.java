@@ -1,6 +1,5 @@
 package com.ch.mvcframework.repository;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +45,33 @@ public class BoardDAO {
 		mybatisConfig.release(sqlSession);
 		
 		return board; 
+		
+	}
+	
+	public int delete(int board_id) {
+		int result = 0 ; 
+		
+		SqlSession sqlSession = mybatisConfig.getSqlSession();
+		result = sqlSession.delete("Board.delete", board_id);
+		
+		//SqlSession은 디폴트로 오토커밋속성이 false로 되어있으니 커밋해줘야함 
+		sqlSession.commit();
+		mybatisConfig.release(sqlSession);
+		
+		return result; 
+		
+	}
+	
+	public int update(Board board) {
+		int result = 0 ; 
+		
+		SqlSession sqlSession = mybatisConfig.getSqlSession();
+		result = sqlSession.update("Board.update", board);
+		
+		sqlSession.commit();
+		mybatisConfig.release(sqlSession);
+		
+		return result; 
 		
 	}
 

@@ -9,31 +9,28 @@ import javax.servlet.http.HttpServletResponse;
 import com.ch.mvcframework.dto.Board;
 import com.ch.mvcframework.repository.BoardDAO;
 
-public class DetailController implements Controller {
+public class DeleteController implements Controller {
     BoardDAO boardDAO = new BoardDAO(); 
-    // 게시물 1건 처리 하위 컨트롤러 
+    // 게시물 1건 삭제 하위 컨트롤러 
+    
+    //3단계 일시키기 , 4단계는 결과저장 (DML수행시 4단계 생략임) 4단계 생략은 view로 가져갈 것 없으니까 재접속해도된다 =포워드할거없다 
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1) 요청으로 넘어온 글 번호 꺼내기
-        int boardId = Integer.parseInt(request.getParameter("board_id"));
-        
-        // 2) DAO에서 해당 글 정보 한 건 가져오기
-        Board board = boardDAO.select(boardId);
-        
-        System.out.println("DTO = " + board);
 
-        // 3) JSP에서 사용할 수 있도록 request에 저장
-        request.setAttribute("board", board);
+        String boardId = request.getParameter("board_id");
+        
+        int result =  boardDAO.delete(Integer.parseInt(boardId));
+        
     }
 
     @Override
     public String getViewName() {
-        return "/board/detail/result";
+        return "/board/delete/result";
     }
 
     @Override
     public boolean isForward() {
-        return true;
+        return false;
     }
 }

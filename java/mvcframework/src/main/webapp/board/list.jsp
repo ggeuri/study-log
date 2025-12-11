@@ -46,7 +46,7 @@ $(()=>{
       <!-- MVC프레임워크상에서 데이터베이스 연동 필요 기능에서 jsp 바로 호출하면 안되는 이유? 
       반드시 컨르롤러를 거쳐야 모델에게 일을 시키고 저장하니까. 무조건 do타고가야됨. 못만나니까! -->
         <td><a href="/board/detail.do?board_id=<%=board.getBoard_id()%>"><%=board.getTitle() %></a></td>
-        <td><%=board.getWriter() %>></td>
+        <td><%=board.getWriter() %></td>
         <td><%=board.getContent() %></td>
       </tr>
   <%} %>

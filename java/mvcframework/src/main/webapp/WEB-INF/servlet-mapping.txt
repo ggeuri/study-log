@@ -6,6 +6,11 @@
 /board/regist.do = com.ch.mvcframework.controller.RegistController
 /board/list.do = com.ch.mvcframework.controller.ListController
 /board/detail.do = com.ch.mvcframework.controller.DetailController
+/board/delete.do = com.ch.mvcframework.controller.DeleteController
+/board/edit.do = com.ch.mvcframework.controller.UpdateController
+
+#사원관련 컨트롤러..매핑 ... 
+/emp/regist.do = com.ch.mvcframework.emp.controller.RegistController
 
 
 #게시판 뷰페이지 매핑 
@@ -14,3 +19,8 @@
 /board/regist/result = /board/list.do
 /board/list/result = /board/list.jsp
 /board/detail/result = /board/detail.jsp
+
+#삭제요청처리시 뷰매핑(.do를 거쳐야 컨트롤러 만나서 새로갱신된 데이터 봄)
+/board/delete/result = /board/list.do
+/board/update/result = /board/detail.do
+ 

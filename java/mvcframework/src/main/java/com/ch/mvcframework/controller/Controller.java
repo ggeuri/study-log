@@ -19,5 +19,5 @@ public interface Controller {
 	//하위 컨트롤러가 jsp까지 데이터 살려서 유지할 일이 있을 경우, 요청에 대한 응답하면 안됨 
 	//반드시 포워딩 처리 ! 따라서 하위컨트롤러는 DispatcherServlet에게 해당요청이 포워딩 대상인지 아닌지 
 	//판단을위한 논리값반환메서드 제공 
-	public boolean isFoward();
+	public boolean isForward();
 }

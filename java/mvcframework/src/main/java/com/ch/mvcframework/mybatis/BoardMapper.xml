@@ -19,6 +19,14 @@ select board_id,title,writer,content,regdate,hit from board order by board_id de
 select board_id,title,writer,content,regdate,hit from board where board_id = #{board_id};
 </select>
 
+<delete id="delete" parameterType="int">
+delete from board where board_id = #{board_id};
+</delete>
+
+<update id="update" parameterType="Board">
+update board set title =#{title}, writer =#{writer}, content=#{content} where board_id = #{board_id};
+</update>
+
 
 
 
