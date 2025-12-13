@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <link rel="stylesheet" href="../css/style.css"></link>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="../js/Box.js"></script>
+    <script>
+        let dayArray = ["일","월","화","수","목","금","토"];
+        let matrix=[];
+        let currentDate; //모든 함수에서 현재 유저가 머물러 있는 날짜를 알게 하기위해서 전역변수로 
+        //해당월의 시작요일 구하기 1. 해당월, 2. 해당월의 날짜를 1일로 조작
+        function getStartDay(yy, mm){
+            let d = new Date(yy, mm, 1); //년,월,일을 생성자의 매개변수로 대입하면 더 편하다 d.setFullYear(yy);이런거나 다름없음  
+            return d.getDay(); //조작객체로부터 요일구하기 
+        } 
+
+        //해당월의 총 일수 구하기 (12월은 31일까지 ! ) 1.해당월의 다음달로 이동 2.조작된 월을 대상으로 0일로 조작 => 해당월의 마지막일 
+         function getTotalDate(yy,mm){
+            let d = new Date(yy,mm+1,0);
+            return d.getDate(); //조작된 날짜 객체에게 일자 물어봄 ! 
+
+         }
+         
+         //달력셀에 실제날짜뿌리기
+         function printNum(yy,mm){
+            let n = 0; // 현재 박스 순번 알기위한 변수 
+            let num = 1; // 실제 날짜 사용할 변수 
+
+            
+            for(let i=0 ; i<6; i++){
+                for(let j=0; j < 7; j++){
+                    if(n>=getStartDay(yy,mm)&&num<=getTotalDate(yy,mm)){//순번용 변수인 n이 각 월 시작 요일 도달시부터 
+                        matrix[i][j].setMsg(num); // Box객체 안에 들어있는 div 사이에 글씨 넣기 
+                        matrix[i][j].setDate(num); // Box객체 안에 들어있는 div 사이에 글씨 넣기 
+                        num++;
+                    }
+                    n++;
+                    
+                }
+            }
+         }
+
+            function clearNum(){
+            for(let i=0; i<matrix.length;i++){
+                for(let j=0; j<matrix[i].length;j++){
+                    matrix[i][j].setMsg("");
+                }
+            }
+            
+        }
+        
+        function createBox(){
+            //박스를 화면에 만들기 
+
+            for(let i=0; i< dayArray.length; i++){
+                let box= new Box(document.querySelector(".days"),i*100,0,100,50,"pink",dayArray[i]);
+            }
+
+             for(let i = 0; i < 6 ; i++){
+                //층수만큼 7칸짜리 배열 필요 
+                let boxList=[]; 
+                for(let j = 0; j < 7; j++){
+                    let box = new Box(document.querySelector(".content"),j*100,i*100,100,100,"white","");
+                    boxList.push(box);
+                }
+                matrix.push(boxList); 
+             }
+        }
+        function setTitle(){
+            $(".header span").html(currentDate.getFullYear()+"년"+(currentDate.getMonth()+1)+"월");
+        }
+
+        function prev(){
+            //현재 월에서 -1한 결과를 이용하여 clearNum(), printNum()
+            currentDate.setMonth(currentDate.getMonth()-1); // 공유된 날짜 객체월을 -1처리 
+            //화면 출력
+
+            setTitle();
+            clearNum();
+            printNum(currentDate.getFullYear(),currentDate.getMonth());
+
+        }
+
+        function next(){
+            //현재 월에서 +1한 결과를 이용하여 clearNum(), printNum()
+            currentDate.setMonth(currentDate.getMonth()+1); // 공유된 날짜 객체월을 -1처리 
+            //화면 출력
+
+            setTitle();
+            clearNum();
+            printNum(currentDate.getFullYear(),currentDate.getMonth());
+
+        }
+
+        $(()=>{
+            currentDate = new Date();
+            createBox();
+            setTitle();
+            clearNum();
+            
+            printNum(currentDate.getFullYear(),currentDate.getMonth());
+
+            $($(".header button")[0]).click(()=>{
+                prev();
+
+            })
+
+            $($(".header button")[1]).click(()=>{
+                next();
+
+            })
+
+            
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <button>이전</button>
+            <span style="color: aliceblue;">2025년 12월</span>
+            <button>다음</button>
+
+        </div>
+        <div class="days"></div>
+        <div class="content"></div>
+
+
+    </div>
+</body>
+
+</html>

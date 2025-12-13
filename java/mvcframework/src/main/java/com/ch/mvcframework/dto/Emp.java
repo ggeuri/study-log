@@ -7,5 +7,6 @@ public class Emp {
 	private int empno;
 	private String ename;
 	private int sal; 
+	private Dept dept;
 
 }

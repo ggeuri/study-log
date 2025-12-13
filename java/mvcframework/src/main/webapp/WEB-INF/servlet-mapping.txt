@@ -9,10 +9,6 @@
 /board/delete.do = com.ch.mvcframework.controller.DeleteController
 /board/edit.do = com.ch.mvcframework.controller.UpdateController
 
-#사원관련 컨트롤러..매핑 ... 
-/emp/regist.do = com.ch.mvcframework.emp.controller.RegistController
-
-
 #게시판 뷰페이지 매핑 
 #자바 코드 안에 뷰페이지명을 직접적으로 명시하게되면, 외부 파일의 명칭 달라질 경우 자바코드가 영향을 받게됨.
 #따라서 유지보수성을 위해서는 자바클래스안에 파일명 직접등록(하드코딩)금지 
@@ -24,3 +20,11 @@
 /board/delete/result = /board/list.do
 /board/update/result = /board/detail.do
  
+ 
+ #사원관련 컨트롤러..매핑 ... 
+/emp/regist.do = com.ch.mvcframework.emp.controller.RegistController
+
+
+#사원등록 뷰매핑 
+/emp/regist/result = /emp/main.jsp
+/emp/error = /emp/error.jsp
