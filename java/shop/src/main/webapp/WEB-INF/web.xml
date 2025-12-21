@@ -4,9 +4,35 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	id="WebApp_ID" version="3.1">
 	<display-name>shop</display-name>
-	<!-- 우리가 제작한 MVC프레임워크와 마찬가지로 스프링 MVC또한 모든 요청을 하나의 진입점으로 몰아넣는다 즉, 프론트에 유일한 
-		컨트롤러 하나 -->
 
+	<!-- ========================================================= [개념 메모] - 
+		모델(Model)은 여러 요청 서블릿이 "공유"해야 하는 공통 기능 - 특정 서블릿(예: admin 서블릿) 안에만 모델을 묶어두면: 
+		→ 일반 유저가 먼저 접근하는 순간, 해당 서블릿 쪽 모델이 아직 생성 전일 수 있어 사용 불가 - 해결 아이디어: → 서블릿 단위가 
+		아니라 "애플리케이션 전역 범위"로 올려서 관리 → 서버 시작~종료까지 살아있는 전역 객체: ServletContext → JSP에서 
+		ServletContext 내장객체 이름: application ========================================================= -->
+
+	<!-- ========================================================= 1) ContextLoaderListener 
+		/ Root Context 관련 설정 - 서버(웹앱) 가동 시점에 리스너가 동작 - ServletContext를 얻어와 스프링 컨테이너를 
+		만들고(설정파일/설정클래스 기반) 전역에서 공유되는 빈들을 생성/관리하려는 목적 ========================================================= -->
+
+	<!-- 서버 가동될때 감지하는 리스너등록 (ServletContext 초기설정 위해 리스너 이용) -->
+	<context-param>
+		<param-name>contextClass</param-name>
+		<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>com.ch.shop.config.spring.RootConfig</param-value>
+	</context-param>
+
+	<!-- 애플리케이션 가동시점에 ServletContext 얻어와 컨테이너 구성(빈 생성) : ContextLoaderListener -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- ========================================================= 2) Filter 
+		설정 - 모든 요청에 대해 UTF-8 인코딩 적용 ========================================================= -->
 	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -15,31 +41,68 @@
 			<param-value>UTF-8</param-value>
 		</init-param>
 	</filter>
-
 	<filter-mapping>
 		<filter-name>encodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-
+	<!-- ========================================================= 3) DispatcherServlet 
+		(Front Controller) - Admin 영역 - 스프링MVC는 모든 요청을 하나의 진입점(DispatcherServlet)으로 
+		모아 처리 - /admin/* 요청을 admin-dispatcher가 담당 ========================================================= -->
 	<servlet>
-		<servlet-name>dispatcher</servlet-name>
+		<servlet-name>admin-dispatcher</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<!-- init-param 이란? 이 서블릿의 인스턴스가 최초에 생성되어질때, 호출되는 생명주기 메서드인 init() 메서드 
-			안으로 전달할 문자열 정보가 있을 경우 이 파라미터 태그를 이용할 수 있다. 아래의 경우 전통적으로 사용해왔던 , xml 방식이 아닌 
-			자바 클래스를 이용한 설정방식을 위한 클래스의 위치를 지정하고 있다.. 주의) 자바 설정 방식을 사용할 경우 스프링의 컨테이너는 AnnotationConfigApplicationContext 
-			를 사용해야 그중 웹애플리케이션에 특화된 AnnotationConfigWebApplicationContext 를 써야한다. -->
+
+		<!-- init-param: 이 서블릿 인스턴스 생성 시 init()로 전달할 설정값들 - XML이 아닌 자바 설정 클래스를 
+			쓰므로 AnnotationConfigWebApplicationContext 사용 -->
 		<init-param>
 			<param-name>contextClass</param-name>
 			<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
 		</init-param>
+
+		<!-- admin용 스프링MVC 설정 클래스 지정 -->
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
-			<param-value>com.ch.shop.config.spring.UserWebConfig</param-value>
+			<param-value>com.ch.shop.config.spring.AdminWebConfig</param-value>
+		</init-param>
+
+		<!-- 파일업로드 관련 설정 -->
+		<multipart-config>
+			<location>/Users/rimu/shopdata/temp</location>
+			<max-file-size>1048576</max-file-size> <!-- 1024*1024로 1메가 제한걸었음 -->
+			<max-request-size>3145728</max-request-size><!-- 요청전체크기 3메가 -->
+			<file-size-threshold>0</file-size-threshold>
+		</multipart-config>
+
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>admin-dispatcher</servlet-name>
+		<url-pattern>/admin/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- ========================================================= 4) DispatcherServlet 
+		(Front Controller) - Shop(기본) 영역 - "/"로 들어오는 기본 요청을 shop-dispatcher가 담당 ========================================================= -->
+	<servlet>
+		<servlet-name>shop-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+
+		<!-- 자바 설정 기반 컨테이너 지정 -->
+		<init-param>
+			<param-name>contextClass</param-name>
+			<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+		</init-param>
+
+		<!-- shop용 스프링MVC 설정 클래스 지정 -->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>com.ch.shop.config.spring.ShopWebConfig</param-value>
 		</init-param>
 	</servlet>
+
 	<servlet-mapping>
-		<servlet-name>dispatcher</servlet-name>
+		<servlet-name>shop-dispatcher</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+
 </web-app>
