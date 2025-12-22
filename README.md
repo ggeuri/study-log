@@ -61,8 +61,8 @@
 | 컬렉션 · 파일 I/O · 예외 | ✔ | 실습 중심 |
 | JDBC + Oracle 연동 | ✔ | PreparedStatement + Validation |
 | Servlet/JSP · Web UI | ✔ | 파일 업로드·DB 연동 |
-| AML Rule Engine (개인 프로젝트) | 🟨 진행 중 | 별도 Repository |
-| Alert Assignment + Dashboard | 🔜 예정 | 설계 기준 구현 예정 |
+| AML Rule Engine (개인 프로젝트) | ✔ v1 완료 | v2에서 Spring Boot로 고도화 예정 |
+| Alert Assignment + Dashboard | ✔ v1 완료 | v2에서 Spring Boot로 고도화 예정 |
 
 ---
 
@@ -90,6 +90,7 @@
 | 2025-12-17 | spring-shop/admin (Controller/Service/MyBatis/AJAX) | 상위카테고리는 렌더링되지만 하위카테고리 비동기 조회가 빈 값/404로 실패해 관리자 상품등록 화면이 미완성 상태였고, 서비스 null 반환·Mapper WHERE/파라미터 바인딩·JSON 응답 누락이 겹치면 장애 원인 추적이 어려웠음. | Service는 DAO 결과를 반환하도록 연결하고, SubCategoryMapper의 컬럼명(topcategory_id) 및 단일 int 파라미터 바인딩 방식을 정리했으며, 비동기 엔드포인트는 @ResponseBody로 JSON 응답을 고정해 화면과 API 책임을 분리함. |
 | 2025-12-18 | spring/web (web.xml, RootConfig, AdminWebConfig/ShopWebConfig, @ResponseBody) | admin/shop 요청을 DispatcherServlet별로만 설정하면 모델(DAO·Service·DataSource·Tx·MyBatis) 빈이 컨텍스트마다 따로 생성되어 주입 실패·트랜잭션 분리·환경설정 중복 같은 운영 리스크가 생길 수 있었고, AJAX 응답을 JSP로 포워딩하면 클라이언트가 원하는 “데이터(JSON)” 대신 HTML이 내려가 기능이 깨질 수 있었음. | ContextLoaderListener로 Root Spring Context를 먼저 띄우고(RootConfig) DB 인프라(DataSource·TransactionManager·SqlSessionFactory/Template)를 전역에 올려 admin/shop이 공유하도록 구조를 정리함. 비동기 API는 컨트롤러에 @ResponseBody를 붙여 Jackson MessageConverter로 객체를 JSON으로 자동 변환해 응답하고, curl로 /admin/subcategory/list?topcategory_id=1 호출로 브라우저 없이도 동작을 빠르게 검증함. |
 | 2025-12-19 | spring/config (RootConfig, AdminWebConfig, web.xml) | DAO/Service/DB 인프라 빈을 DispatcherServlet 전용 컨텍스트에 두면 shop/admin 요청 간 공유가 깨져 트랜잭션·DataSource 불일치 및 빈 미주입 위험이 발생할 수 있었음. 파일 업로드도 멀티파트 리졸버/서블릿 설정 누락 시 요청 자체가 실패함. | Root 컨테이너에 DataSource·TxManager·SqlSessionFactory/Template을 등록해 전역 공유 구조로 정리하고, 메시지컨버터/정적리소스 핸들러를 함께 구성함. AdminWebConfig에 CommonsMultipartResolver를 추가하고 web.xml multipart-config로 업로드 한도·임시경로를 명시해 런타임 실패를 예방함. |
+| 2025-12-22 | com.ch.shop.model.product/ProductServiceImpl, ProductMapper.xml, db/schema.sql | 상품 등록이 product만 저장되거나 옵션/이미지 저장 중 일부 실패 시 데이터 불일치(부분 저장) 위험이 있었다. 또한 AUTO_INCREMENT PK가 후속 테이블 insert에 필요해 흐름 제어가 중요했다. | Service 계층에서 @Transactional로 product→옵션(color/size)→이미지 insert를 하나의 Use Case로 묶어 실패 시 전체 rollback 되게 했다. MyBatis selectKey + LAST_INSERT_ID()로 생성된 product_id를 즉시 주입해 후속 매핑 테이블 insert가 FK 정합성을 유지하도록 처리했다. |
 ⸻
 
 🔗 Personal Project

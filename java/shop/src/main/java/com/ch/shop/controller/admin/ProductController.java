@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ch.shop.dto.Color;
 import com.ch.shop.dto.Product;
 import com.ch.shop.dto.Size;
+import com.ch.shop.model.product.ProductService;
 import com.ch.shop.model.topcategory.TopCategoryService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,8 @@ public class ProductController {
 	//서비스 보유(느슨하게 보유)
 	@Autowired
 	private TopCategoryService topCategoryService;
-	
+	@Autowired
+	private ProductService productService; 
 	//상품 등록폼 요청 처리 
 	@GetMapping("/product/registform")
 	public String getRegistForm(Model model) {
@@ -83,6 +85,14 @@ public class ProductController {
 		log.debug("sizeList는 !! " + product.getSizeList());
 		log.debug("간단소개는!! " + product.getIntroduce());
 		log.debug("상세설명은!! " + product.getDetail());
+		
+		/*
+		상품등록 = 하나의 유스케이스.
+		내부적으로 product/product_img/product_size/product_color 4개 저장이 묶여 실행됨.
+		Controller는 "등록 요청"만 알고, 세부 작업/순서/트랜잭션 처리는 Service가 담당한다.
+		*/
+		productService.regist(product);
+		
 
 		//이미지가 자동으로 채워졌는지 확인 
 		MultipartFile[] photo = product.getPhoto();
@@ -93,7 +103,7 @@ public class ProductController {
 			//메모리의 임시파일을 실제원하는 하드경로에 저장하기 
 			try {
 				p.transferTo(new File("/Users/rimu/shopdata/product/" + p.getOriginalFilename())); 
-				// ✅ [최소수정 2] product 뒤에 "/" 추가 + 경로 안전하게
+				
 			} catch (IllegalStateException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
