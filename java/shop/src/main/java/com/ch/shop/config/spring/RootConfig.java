@@ -22,6 +22,8 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import com.ch.shop.util.FileManager;
+
 /*
  [RootConfig 역할]
  - 전통적인 spring xml(빈 등록 파일)을 "자바 설정 클래스"로 대체한 것
@@ -36,7 +38,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
    Root 컨테이너가 이 설정을 읽고 빈을 만들어 관리하는 구조가 된다.
 */
 @Configuration
-@ComponentScan(basePackages = {"com.ch.shop.model" })
+@ComponentScan(basePackages = {"com.ch.shop.model","com.ch.shop.util" })
 @EnableTransactionManagement
 public class RootConfig extends WebMvcConfigurerAdapter {
 	// 스프링프레임웍을 지배하는 개발원리 중 하나인 DI를 구현하려면 개발자는 사용할 객체들을 미리 빈으로 등록해야 한다..

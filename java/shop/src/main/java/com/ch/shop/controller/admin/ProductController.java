@@ -1,21 +1,30 @@
 package com.ch.shop.controller.admin;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ch.shop.dto.Color;
 import com.ch.shop.dto.Product;
 import com.ch.shop.dto.Size;
+import com.ch.shop.exception.BoardException;
+import com.ch.shop.exception.DirectoryException;
+import com.ch.shop.exception.ProductColorException;
+import com.ch.shop.exception.ProductException;
+import com.ch.shop.exception.ProductImgException;
+import com.ch.shop.exception.ProductSizeException;
+import com.ch.shop.exception.UploadException;
 import com.ch.shop.model.product.ProductService;
 import com.ch.shop.model.topcategory.TopCategoryService;
 
@@ -52,7 +61,7 @@ public class ProductController {
 	 */
 	@PostMapping("/product/regist")
 	@ResponseBody
-	public String regist(Product product, int[] color, int[] size) {
+	public Map<String, String> regist(Product product, int[] color, int[] size) {
 		//매개변수로 지정된 객체와 , html문서의 폼에 지정된 파라미터명이 일치한다면 자동 매핑이 이루어짐
 		log.debug("선택하신 하위 카테고리는 " + product.getSubCategory().getSubcategory_id());
 		log.debug("상품명" + product.getProduct_name());
@@ -91,26 +100,53 @@ public class ProductController {
 		내부적으로 product/product_img/product_size/product_color 4개 저장이 묶여 실행됨.
 		Controller는 "등록 요청"만 알고, 세부 작업/순서/트랜잭션 처리는 Service가 담당한다.
 		*/
-		productService.regist(product);
-		
-
-		//이미지가 자동으로 채워졌는지 확인 
-		MultipartFile[] photo = product.getPhoto();
-
-		for (MultipartFile p : photo) {
-			log.debug("업로드된 파일명은" + p.getOriginalFilename());
-
-			//메모리의 임시파일을 실제원하는 하드경로에 저장하기 
-			try {
-				p.transferTo(new File("/Users/rimu/shopdata/product/" + p.getOriginalFilename())); 
-				
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		try {
+			productService.regist(product);
+		} catch (Exception e) {
+			productService.cancleUpload(product);		
+			e.printStackTrace();
+			throw e;
 		}
-
-		return "ok";
+		//자바객체를 json문자열로 변환해서 반환 
+//		StringBuffer sb = new StringBuffer();
+//		sb.append("{");
+//		sb.append("\"message\" : \"상품등록\"");
+//		sb.append("}");
+		
+		//JSON표기 자바로 표현하면 결국 Map 
+		Map<String,String> body = new HashMap<String, String>();
+		body.put("message","상품등록성공");
+		
+		
+//이제 @responsebody가 알아서 바꿔줄거임 		
+		return body;
 	}
+	
+	//상품목록요청처리
+	@GetMapping("/product/list") //매핑 
+	public String getListPage(Model model) {
+		List<Product> productList = productService.getList();
+		model.addAttribute("productList",productList);
+		return "admin/product/list"; //jsp 이름 
+	}
+	
+	@GetMapping("/product/async/list")
+	@ResponseBody
+	public List<Product> getList(Model model) {
+		List<Product> productList = productService.getList();
+		return productList;
+	}
+	
+	
+	@ResponseBody
+	@ExceptionHandler({BoardException.class,DirectoryException.class,ProductColorException.class,ProductException.class,ProductImgException.class,ProductSizeException.class,UploadException.class})
+	public ResponseEntity<Map<String, String>> handle(Exception e) {
+		log.debug("상품등록시 예외가 발생하여 handler호출");
+		Map<String,String> body = new HashMap<String, String>();
+		body.put("message","상품등록실패");
+		
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+	}
+
+	//컨트롤러의 요청처리메서드들 중 예외 발생시 @ExceptionHandler로 예외를 처리하는 메서드가 자동으로 호출됨 
 }

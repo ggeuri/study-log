@@ -16,7 +16,7 @@ public class MainController {
 	@Autowired
 	private TopCategoryService topCategoryService; 
 	
-	@GetMapping("/shop/main")
+	@GetMapping("/")
 	public ModelAndView getMain() {
 		//여러데이터베이스 연동 중 상위카테고리 가져오기 
 		List topList = topCategoryService.getList();
