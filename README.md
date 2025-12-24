@@ -92,7 +92,7 @@
 | 2025-12-19 | spring/config (RootConfig, AdminWebConfig, web.xml) | DAO/Service/DB 인프라 빈을 DispatcherServlet 전용 컨텍스트에 두면 shop/admin 요청 간 공유가 깨져 트랜잭션·DataSource 불일치 및 빈 미주입 위험이 발생할 수 있었음. 파일 업로드도 멀티파트 리졸버/서블릿 설정 누락 시 요청 자체가 실패함. | Root 컨테이너에 DataSource·TxManager·SqlSessionFactory/Template을 등록해 전역 공유 구조로 정리하고, 메시지컨버터/정적리소스 핸들러를 함께 구성함. AdminWebConfig에 CommonsMultipartResolver를 추가하고 web.xml multipart-config로 업로드 한도·임시경로를 명시해 런타임 실패를 예방함. |
 | 2025-12-22 | com.ch.shop.model.product/ProductServiceImpl, ProductMapper.xml, db/schema.sql | 상품 등록이 product만 저장되거나 옵션/이미지 저장 중 일부 실패 시 데이터 불일치(부분 저장) 위험이 있었다. 또한 AUTO_INCREMENT PK가 후속 테이블 insert에 필요해 흐름 제어가 중요했다. | Service 계층에서 @Transactional로 product→옵션(color/size)→이미지 insert를 하나의 Use Case로 묶어 실패 시 전체 rollback 되게 했다. MyBatis selectKey + LAST_INSERT_ID()로 생성된 product_id를 즉시 주입해 후속 매핑 테이블 insert가 FK 정합성을 유지하도록 처리했다. |
 | 2025-12-23 | com.ch.shop.model.product/ProductServiceImpl, com.ch.shop.util/FileManager | 상품등록이 DB 트랜잭션은 롤백되지만 파일 저장은 롤백되지 않아 실패 시 파일 찌꺼기/정합성 문제가 발생할 수 있음. | 상품등록 유스케이스를 Service 단에서 @Transactional로 묶고, 파일 저장은 FileManager로 분리했다. 예외 발생 시 보상 로직(cancleUpload/remove)으로 업로드 디렉토리를 정리해 비DB 자원까지 정합성을 확보했다. |
-
+| 2025-12-24 | config/RootConfig(ResourceHandler), shop/MemberController(OAuth), mapper/Product.xml | 상품 이미지가 URL 매핑 불일치로 깨지고, OAuth 토큰 발급 후 사용자정보 조회 단계에서 403 발생해 로그인 흐름이 중단될 리스크가 있었다. | 정적 리소스는 /photo/**로만 노출되므로 JSP img src prefix를 /photo로 통일하고, 저장 디렉토리 구조와 URL을 1:1로 맞춰 검증했다. OAuth는 authorize→code→token→userinfo 단계로 분해해 헤더/바디 규약을 확인하고, userinfo endpoint는 https 사용 및 scope/redirectUri 일치 여부를 점검하도록 정리했다. |
 ⸻
 
 🔗 Personal Project

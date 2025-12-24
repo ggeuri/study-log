@@ -7,17 +7,45 @@
 		<!--insert 직후 생성된 PK(AUTO_INCREMENT)를 바로 받아야 해서 MyBatis는 <selectKey>로 insert 
 			태그 안에서 PK를 조회/세팅한다. last_insert_id() : 현재 세션에서 발생시킨 auto_increment 값을 반환 
 			(특징? 현재 세션내에서 나에 의해서 발생된 값만 반환) 시퀀스명.currval : 동일 목적 -->
-		<selectKey keyColumn="product_id" keyProperty="product_id" resultType="int" order="AFTER">
+		<selectKey keyColumn="product_id" keyProperty="product_id"
+			resultType="int" order="AFTER">
 			SELECT LAST_INSERT_ID() as product_id
 		</selectKey>
 		insert into
 		product(product_name,brand,price,discount,introduce,detail,subcategory_id)
 		values
-		(#{product_name}, #{brand}, #{price}, #{discount}, #{introduce},#{detail},#{subCategory.subcategory_id})
+		(#{product_name}, #{brand}, #{price}, #{discount},
+		#{introduce},#{detail},#{subCategory.subcategory_id})
 	</insert>
+
+	<!-- DTO와 컬럼명 일치하지않을경우 수동 매핑 //수동하려면 해당 쿼리문 전체 수동해야함 -->
+    <resultMap id ="productMap" type="Product">
+        <id 		 column="product_id"             	property="product_id" />
+        <result column="product_name"	        property="product_name" />
+        <result column="brand"          				property="brand" />
+        <result column="price"         	 				property="price" />
+        <result column="discount"           			property="discount" />
+        <result column="introduce"          			property="introduce" />
+        <result column="detail"             			property="detail" />
+        <!-- 다른 테이블의 레코드 1건 가져오기 association이란 부모 레코드 가져오는 기능. 1:1관계 -->
+        <association column="subcategory_id" property="subCategory" javaType="SubCategory"
+        	select = "SubCategory.select" />
+        	
+        	<!--  컬렉션 ? 여러건의 자식 레코드가져올 수 있는 mybatis기능 내 pk로 자식땡겨옴 -->
+        	
+        	<collection column="product_id" 
+        	select = "ProductImg.selectByProductId" 
+        	property="productImgList"
+        	javaType = "java.util.List"
+        	ofType="ProductImg"
+        	/>
+        	
+    </resultMap>
 	
-	<select id="selectAll" resultType="Product">
-	select product_id,product_name,brand,price,discount,introduce,detail,subcategory_id from product 
+	<select id="selectAll"  resultMap="productMap">
+		select
+		product_id,product_name,brand,price,discount,introduce,detail,subcategory_id
+		from product
 	</select>
 
 </mapper>

@@ -1,3 +1,4 @@
+<%@page import="com.ch.shop.dto.ProductImg"%>
 <%@page import="com.ch.shop.dto.Product"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page import="java.util.List"%>
@@ -96,8 +97,11 @@ List<Product> productList=(List)request.getAttribute("productList");
                   <%Product product = productList.get(i); %>
                     <tr>
                       <td>1</td>
-                      <td><img src=""></td>
-                       <td><%//=product.getSubCategory().getSubcategory_id()%></td>
+                      <%
+                      ProductImg productImg = product.getProductImgList().get(0);
+                      %>
+                      <td><img src = "/photo/p<%=product.getProduct_id() %>/<%=productImg.getFilename()%>" width="30px"/></td>
+                       <td><%=product.getSubCategory().getSubname()%></td>
                       <td><%=product.getProduct_name()%></td>
                       <td><%=product.getBrand()%></td>
                       <td><%=product.getPrice()%></td>
