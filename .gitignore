@@ -36,3 +36,4 @@ replay_pid*
 **/*.war
 # Eclipse workspace metadata
 **/.metadata/
+java/WebBoardCopilot/src/main/resources/application.yml
