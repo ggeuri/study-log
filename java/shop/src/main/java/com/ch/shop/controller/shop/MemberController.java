@@ -4,6 +4,8 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,9 +22,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.ch.shop.dto.GoogleUser;
+import com.ch.shop.dto.Member;
+import com.ch.shop.dto.NaverUser;
+import com.ch.shop.dto.NaverUserResponse;
 import com.ch.shop.dto.OAuthClient;
 import com.ch.shop.dto.OAuthTokenResponse;
+import com.ch.shop.dto.Provider;
 import com.ch.shop.dto.TopCategory;
+import com.ch.shop.model.member.MemberService;
+import com.ch.shop.model.member.ProviderService;
 import com.ch.shop.model.topcategory.TopCategoryService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,11 +45,17 @@ public class MemberController {
 	private Map<String, OAuthClient> oauthClients;
 	@Autowired
 	private RestTemplate restTemplate;
+	@Autowired
+	private MemberService memberService;
+	@Autowired
+	private ProviderService providerService;
+	
+	
+	
 	//회원 로그인 폼 요청 처리 
 	@GetMapping("/member/loginform")
 	public String getLoginForm(Model model) {
-		List<TopCategory> topList = topCategoryService.getList();
-		model.addAttribute("topList", topList);
+
 		return "shop/member/login";
 	}
 	
@@ -75,7 +89,7 @@ public class MemberController {
 	//클라이언트가 동의화면(최초사용자) 또는 로그인(기존) 요청 provider가 이를 처리하는 과정에서 개발자가 등록해놓은 callback주소이용하여 임시코드 Authorize code 발급함 
 	
 	@GetMapping("/login/callback/google")
-	public String handleCallback(String code) {
+	public String handleGoogleCallback(String code, HttpSession session) {
 		//구글이 보내온 인증코드와 나의 ClientId, clientSecret 조합하여 token 요청
 		//HTTP통신규약지켜서 말걸때는 머리 몸 구성해서 요청 
 		
@@ -118,7 +132,101 @@ public class MemberController {
 		
 		//얻어진 유저정보이용하여 할일 1) 얻어진 회원이 mysql 존재하는지 따져서 있으면 세션부여 -> 메인으로 보내기 // 없으면? -> member테이블에 인서트+세션부여 +메인 
 		
-		return null;
+		//memberDTO에 맞게 GoogleUser를 member로 이식중 
+		Member member = new Member();
+		GoogleUser user = userInfoResponse.getBody();
+		
+		member.setProvider_userid(user.getId());
+		member.setName(user.getName());
+		member.setEmail(user.getEmail());
+
+		Provider provider = providerService.selectByName("google");
+		member.setProvider(provider);
+		memberService.registOrUpdate(member);
+
+//		List<TopCategory> topList = topCategoryService.getList();
+		session.setAttribute("member",member);
+		
+		//로그인 성공하면 브라우저 종료할때까지 자신의 정보 접근할 수
+		
+		
+		return "redirect:/";//회원 로그인이 처리되면, 쇼핑몰의 메인으로 보내기 
+	}
+	
+	
+	//네이버 로그인 
+	@GetMapping("/login/callback/naver")
+	public String handleNaverLogin(String code, HttpSession session) { 
+		log.debug("네이버 발급 code={}", code);
+		
+		/*
+		----------------------------------------------------------------
+		 1) code, client id, client secret 을 구성하여 토큰 발급을 요청
+		----------------------------------------------------------------
+		*/
+		OAuthClient client = oauthClients.get("naver");
+		
+		MultiValueMap<String,String> param = new LinkedMultiValueMap<String, String>();
+		param.add("grant_type","authorization_code");//임시코드이용하여 토큰요청하겠다 
+		param.add("code",code);
+		param.add("client_id",client.getClientId());
+		param.add("client_secret",client.getClientSecret());
+		param.add("redirect_uri",client.getRedirectUri());
+		
+		//머리 만들기 
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		
+		//머리와 본문을 합쳐서 하나의 HTTP요청 엔터티로결합 (몸이 앞, 뒤가 머리 
+		HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(param, headers);
+		
+		ResponseEntity<OAuthTokenResponse> response =restTemplate.postForEntity(client.getTokenUrl(), request, OAuthTokenResponse.class);
+		log.debug("네이버가 응답한 토큰 포함정보"+response);
+		
+		OAuthTokenResponse responseBody = response.getBody();
+		
+		/*
+		----------------------------------------------------------------
+		 2) 발급된 토큰을 이용하여 회원 정보 조회하기
+		----------------------------------------------------------------
+		*/
+		String access_token = responseBody.getAccess_token();
+		HttpHeaders userInfoHeaders = new HttpHeaders(); 
+		//헤더속성값넣ㄱ ㅣ
+		userInfoHeaders.add("Authorization","Bearer "+access_token);
+		
+		HttpEntity<String> userInfoRequest = new HttpEntity<>("", userInfoHeaders);
+		
+		ResponseEntity<NaverUserResponse> userInfoResponse = restTemplate.exchange(client.getUserInfoUrl(), HttpMethod.GET,userInfoRequest,NaverUserResponse.class);
+		NaverUserResponse naverUserResponse = userInfoResponse.getBody();
+		NaverUser naverUser = naverUserResponse.getResponse();
+		
+		log.debug("아이디함보여줘라"+naverUser.getId());
+		log.debug("이름함보여줘라"+naverUser.getName());
+		log.debug("이메일함보여줘라"+naverUser.getEmail());
+		
+		/*
+		----------------------------------------------------------------
+		 3) 로그인 처리
+		  - 최초의 로그인 시도자는 회원가입을 처리
+		  - 기존 가입자는, 로그인만 처리 (회원정보 업데이트) 세션에 회원정보 저장 
+		----------------------------------------------------------------
+		*/
+		Member member = new Member();
+		
+		member.setProvider_userid(naverUser.getId());
+		member.setName(naverUser.getName());
+		member.setEmail(naverUser.getEmail());
+		
+		Provider provider = providerService.selectByName(client.getProvider());
+		member.setProvider(provider);
+		memberService.registOrUpdate(member);
+
+//		List<TopCategory> topList = topCategoryService.getList();
+		session.setAttribute("member",member);
+
+		
+		return "redirect:/";//회원 로그인이 처리되면, 쇼핑몰의 메인으로 보내기 
 	}
 	
 	

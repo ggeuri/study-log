@@ -20,11 +20,6 @@ import com.ch.shop.dto.OAuthClient;
 @ComponentScan(basePackages = { "com.ch.shop.controller.shop"})
 public class ShopWebConfig extends WebMvcConfigurerAdapter {
 	
-//	context.xml 등에 명시된 외부 자원 JNDI방식으로 읽어올 수 있는 스프링 객체 
-	@Bean
-	public JndiTemplate jndiTemplate() {
-		return new JndiTemplate();
-	}
 	
 	@Bean
 	public RestTemplate restTemplate() {
@@ -41,11 +36,23 @@ public class ShopWebConfig extends WebMvcConfigurerAdapter {
 		return (String)jndiTemplate.lookup("java:comp/env/google/client/secret"); 
 	}
 	
+	//네이버~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	@Bean
+	public String naverClientId(JndiTemplate jndiTemplate) throws Exception{
+		return (String)jndiTemplate.lookup("java:comp/env/naver/client/id"); 
+	}
+	@Bean
+	public String naverClientSecret(JndiTemplate jndiTemplate) throws Exception{
+		return (String)jndiTemplate.lookup("java:comp/env/naver/client/secret"); 
+	}
+	
 	//Oauth로그인시 사용되는 환경변수는 객체로 담아 관리하면 유지하기 좋음. 여러프로바이더 연동하니 보관해놓자 OAuthClient객체를 여러개 메모리 보관 
 	@Bean
 	public Map<String, OAuthClient> oauthClients(
 			@Qualifier("googleClientId") String googleClientId,
-			@Qualifier("googleClientSecret") String googleClientSecret
+			@Qualifier("googleClientSecret") String googleClientSecret,
+			@Qualifier("naverClientId") String naverClientId,
+			@Qualifier("naverClientSecret") String naverClientSecret
 			){
 		//구글네이버카카오 각각 OAuthClient 인스턴스 담은 후 다시 Map에 모아두자 
 		Map<String, OAuthClient> map = new HashMap<String, OAuthClient>();
@@ -61,6 +68,19 @@ public class ShopWebConfig extends WebMvcConfigurerAdapter {
 		google.setUserInfoUrl("https://openidconnect.googleapis.com/v1/userinfo");
 		
 		map.put("google",google);
+		
+		OAuthClient naver = new OAuthClient();
+		naver.setProvider("naver");
+		naver.setClientId(naverClientId);
+		naver.setClientSecret(naverClientSecret);
+		naver.setAuthorizeUrl("https://nid.naver.com/oauth2.0/authorize");
+		naver.setTokenUrl("https://nid.naver.com/oauth2.0/token");
+		naver.setScope("name email"); //사용자 정보 접근범위 
+		naver.setRedirectUri("http://localhost:8888/login/callback/naver");
+		naver.setUserInfoUrl("https://openapi.naver.com/v1/nid/me");
+		
+		map.put("naver",naver);
+		
 		return map;
 	};
 	

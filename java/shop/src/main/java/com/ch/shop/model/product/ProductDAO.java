@@ -8,5 +8,7 @@ public interface ProductDAO {
 	public void insert(Product product);
 	
 	public List<Product> selectAll();
+	public List<Product> selectBySubCategoryId(int subcategory_id);
+	public Product select(int product_id);
 
 }

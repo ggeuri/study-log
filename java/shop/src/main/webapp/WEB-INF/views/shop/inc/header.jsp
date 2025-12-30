@@ -1,20 +1,26 @@
+<%@page import="com.ch.shop.dto.TopCategory"%>
+<%@page import="java.util.List"%>
+<%@page import="com.ch.shop.dto.Member"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%
+List<TopCategory> topList = (List)request.getAttribute("topList");
+%>
     <header class="header">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
-                        <a href="./index.html"><img src="/static/template/img/logo.png" alt=""></a>
+                        <a href="/"><img src="/static/template/img/logo.png" alt=""></a>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a href="./index.html">Home</a></li>
-                            <%for(TopCategory topCategory : topList){ %>
-                            <li><a href="#"><%= topCategory.getTopname()%></a></li>
+                            <%for(TopCategory topCategory  : topList){%>
+                            	<li><a href="#"><%=topCategory.getTopname()%></a></li>
                             <%} %>
-                            <li><a href="./shop.html">Shop</a></li>
+                            <li><a href="/product/list">Shop</a></li>
                             <li><a href="#">Pages</a>
                                 <ul class="dropdown">
                                     <li><a href="./product-details.html">Product Details</a></li>
@@ -31,8 +37,15 @@
                 <div class="col-lg-3">
                     <div class="header__right">
                         <div class="header__right__auth">
-                            <a href="#">Login</a>
-                            <a href="#">Register</a>
+                        <%if(session.getAttribute("member")==null){ %>
+                            <a href="/member/loginform">Login</a>
+                            <a href="/member/loginform">Register</a>
+                            <%} else{ %>
+                            <a href="/member/loginform">MyPage</a>
+                            <%Member member = (Member)session.getAttribute("member"); %>
+                            <a href="#"><%=member.getName() %></a>
+                            
+                            <%} %>
                         </div>
                         <ul class="header__right__widget">
                             <li><span class="icon_search search-switch"></span></li>
@@ -51,3 +64,4 @@
             </div>
         </div>
     </header>
+    

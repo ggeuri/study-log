@@ -5,11 +5,11 @@ import java.util.List;
 import com.ch.shop.dto.Product;
 
 public interface ProductService {
+	public void regist(Product product);
+	public List getList();//모든 목록 가져오기
+	public List selectBySubCategoryId(int subcategory_id); //하위 카테고리에 소속된 목록만 가져오기 
 	
-	public void regist(Product product); //서비스는 트랜잭션 통으로 등록할거니까 
-	public List<Product> getList();
-	
-	//pk값만알면지울수있으니까 Product받음 
-	public void cancleUpload(Product product); 
-
+	//우리의 경우, 이미지들을 상품의 pk값을 이용하여 "p23" 형식으로 만들었기 때문에, pk값만 알면 이미지를 모두 제거할 수 있다
+	public void cancelUpload(Product product);
+	public Product select(int product_id);
 }

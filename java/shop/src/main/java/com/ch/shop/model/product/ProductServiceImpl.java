@@ -96,7 +96,7 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public void cancleUpload(Product product) {
+	public void cancelUpload(Product product) {
 		//모든 OS에서는 디렉토리 안에 파일 존재할 경우 바로 디렉토리 삭제 금지 따라서 파일부터 지워 
 		String dirName = rootDir+"p"+product.getProduct_id();
 		fileManager.remove(dirName);
@@ -107,4 +107,18 @@ public class ProductServiceImpl implements ProductService{
 	public List<Product> getList() {
 		return productDAO.selectAll();
 	}
+
+	@Override
+	public List<Product> selectBySubCategoryId(int subcategory_id) {
+		// TODO Auto-generated method stub
+		return productDAO.selectBySubCategoryId(subcategory_id);
+	}
+
+	@Override
+	public Product select(int product_id) {
+		// TODO Auto-generated method stub
+		return  productDAO.select(product_id);
+	}
+
+
 }

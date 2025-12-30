@@ -1,9 +1,7 @@
 <%@page import="com.ch.shop.dto.TopCategory"%>
 <%@page import="java.util.List"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
-<%
-List<TopCategory> topList = (List)request.getAttribute("topList");
-%>
+
 <!DOCTYPE html>
 <html lang="zxx">
 

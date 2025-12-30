@@ -6,4 +6,10 @@
 select color_id,color_name from color order by color_id desc 
 </select>
 
+<select id="selectByProductId" parameterType="int" resultType="Color">
+select color_id, color_name from color where color_id in (SELECT color_id 
+FROM product_color 
+WHERE 1=1 
+AND product_id = #{product_id})
+</select>
 </mapper>

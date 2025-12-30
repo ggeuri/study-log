@@ -103,7 +103,7 @@ public class ProductController {
 		try {
 			productService.regist(product);
 		} catch (Exception e) {
-			productService.cancleUpload(product);		
+			productService.cancelUpload(product);		
 			e.printStackTrace();
 			throw e;
 		}
@@ -139,6 +139,7 @@ public class ProductController {
 	
 	
 	@ResponseBody
+	//컨트롤러의 요청처리메서드들 중 예외 발생시 @ExceptionHandler로 예외를 처리하는 메서드가 자동으로 호출됨 
 	@ExceptionHandler({BoardException.class,DirectoryException.class,ProductColorException.class,ProductException.class,ProductImgException.class,ProductSizeException.class,UploadException.class})
 	public ResponseEntity<Map<String, String>> handle(Exception e) {
 		log.debug("상품등록시 예외가 발생하여 handler호출");
@@ -148,5 +149,4 @@ public class ProductController {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
 	}
 
-	//컨트롤러의 요청처리메서드들 중 예외 발생시 @ExceptionHandler로 예외를 처리하는 메서드가 자동으로 호출됨 
 }
