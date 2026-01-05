@@ -1,0 +1,53 @@
+<meta charset="utf-8">
+<script>
+/*
+[배경]
+- 전통적인 JavaScript는 비동기 처리 시 콜백(callback)을 사용했는데,
+  콜백을 계속 중첩하면 코드가 급격히 복잡해지는 문제가 발생함(= 콜백 지옥).
+
+[전통적 콜백 중첩 방식의 문제]
+1) 콜백 안에 콜백이 계속 들어가서 코드 가독성이 떨어지고 유지보수가 어려움
+2) 예외 처리 흐름을 Java의 try-catch처럼 "하나의 catch 블록"으로 일관되게 묶기 어려움
+
+[해결책]
+- ES6부터 Promise가 도입되어 위 문제를 완화할 수 있어 프런트엔드에서 많이 사용됨
+- Promise를 적극 도입/활용하여 비동기 흐름과 예외 처리를 더 구조적으로 관리
+
+Promise란?
+		•	비동기 작업의 “결과(성공/실패)”를 나중에 제공하겠다는 약속을 표현하는 객체
+		•	비동기 작업이 끝나면 Promise는 상태가 확정되고, 그 결과를 then/catch로 이어서 처리함
+		
+2.	상태(State)가 있음 (3가지)
+
+		•	pending : 진행 중
+		•	fulfilled : 성공(결과 값 있음)
+		•	rejected : 실패(에러 있음)
+
+3.	처리(소비) 방식
+
+		•	성공: .then(...)
+		•	실패: .catch(...)
+		•	마무리(성공/실패 둘 다): .finally(...)
+
+*/
+
+new Promise(function(resolve, reject){//첫번째는 fulfilled, 두번째는 rejected 임 
+//비동기로 처리하고픈 코드작성 
+	setTimeout(function () {
+	  console.log("finish");
+	}, 1000);
+	
+	//비동기 요청이 네트워크 작업이면
+	//응답이 성공/실패인지(에러 처리 포함) 반드시 구분해서 처리해야 함
+	
+	reject(); //첫번째 매개변수로 전달된 함수를 호출했으므로 Promise상태를 fulfilled로 놓는 것 
+	//resolve()를 호출하면 비동기 코드 완료됐을 때 then 
+
+}).then(()=>{
+	console.log("ssss")
+}).catch(()=>{
+	console.log("fffff")
+})
+
+	
+</script>

@@ -59,6 +59,15 @@ public class MemberController {
 		return "shop/member/login";
 	}
 	
+	//회원 로그아웃 요청 처리 
+	@GetMapping("/member/logout")
+	public String logout(HttpSession session) {
+		//로그아웃처리시 세션객체를 메모리에서 제거할수는 없다. 자바는 GC로 인스턴스소멸이라서 
+		//따라서 세션을 없애는게 아니라 무효화시켜야함 
+		session.invalidate();
+		return "redirect:/";
+	}
+	
 	//sns로그인을 희망하는 유저들의로그인 인증 요청 url을 알려주는 컨트롤러 메서드
 	//@PathVariable("provider")는 url 일부를 파라미터화 시키는 기법 REST API에 사용됨 
 	@GetMapping("/oauth2/authorize/{provider}")
