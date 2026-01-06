@@ -96,6 +96,7 @@
 | 2025-12-29 | com.ch.shop.controller.shop/MemberController, com.ch.shop.config.spring/ShopWebConfig, mapper/MemberMapper.xml | OAuth 로그인에서 code–token–userinfo 흐름이 끊기면 로그인 자체가 불가하고, provider 기준 유일성이 없으면 중복 회원/세션 불일치 리스크가 발생함 | provider별 authorize/token/userinfo 파라미터를 Map 기반 설정으로 분리하고, callback에서 code를 token으로 교환 후 userinfo로 회원을 식별해 가입/업데이트 흐름을 구성함. DB는 (provider_id, provider_userid) 기준으로 중복을 통제하도록 조회조건과 제약을 정리하고, insert 후 PK 확보 전략(selectKey/재조회)을 검토함 |
 | 2025-12-30 | com.ch.shop.controller.shop/GlobalController, mapper/TopCategoryMapper.xml, mapper/SubCategoryMapper.xml, mapper/ProductMapper.xml | 전역 메뉴/상품 조회에서 중첩 리스트 매핑과 int 단일 파라미터 바인딩이 깨지면 화면 데이터 누락·쿼리 미조회가 발생해 운영 장애로 이어질 수 있음 | @ControllerAdvice+@ModelAttribute로 topList를 공통 주입해 누락을 방지하고, resultMap의 collection/association으로 중첩 데이터를 명시 매핑함. 단일 int 파라미터는 #{value}/#{_parameter} 또는 @Param으로 이름을 고정해 바인딩 실패 리스크를 제거함. |
 | 2026-01-05 | shop/LoginCheckInterceptor, shop/ShopWebConfig, shop/CartController | 컨트롤러마다 세션 체크를 반복하면 누락/우회 리스크가 생기고, 장바구니가 요청마다 초기화되는 버그로 데이터가 누적되지 않음 | 인터셉터로 로그인 체크를 공통화하고(예외 경로/정적 리소스 제외), 장바구니는 세션에서 기존 Map을 조회 후 없을 때만 생성하도록 흐름을 정리해 상태 누적을 보장함. Redirect 경로는 컨텍스트 경로/루프 가능성을 함께 점검함. |
+| 2026-01-06 | com.ch.shop.controller.shop.CartController / LoginCheckInterceptor / detail.jsp | 세션 장바구니는 초기 null로 NPE가 나기 쉽고, 미로그인 AJAX 요청에 redirect/HTML이 내려가면 프론트(JSON 파싱)가 깨질 위험이 있음 | 장바구니는 Map으로 저장해 수량 누적을 O(1)로 처리하고, 화면은 List로 변환해 렌더링을 단순화한다. Interceptor에서 동기/비동기 요청을 분기해 AJAX는 401+JSON으로 통일하여 클라이언트 오류 처리를 안정화한다. 또한 실무에선 클라이언트가 보낸 가격/상품명은 변조 가능하므로 서버 조회로 확정하는 방향이 안전하다. |
 ⸻
 
 🔗 Personal Project

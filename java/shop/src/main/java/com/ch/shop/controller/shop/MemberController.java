@@ -226,6 +226,7 @@ public class MemberController {
 		member.setProvider_userid(naverUser.getId());
 		member.setName(naverUser.getName());
 		member.setEmail(naverUser.getEmail());
+
 		
 		Provider provider = providerService.selectByName(client.getProvider());
 		member.setProvider(provider);

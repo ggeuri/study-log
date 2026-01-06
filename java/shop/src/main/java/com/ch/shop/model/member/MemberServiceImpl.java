@@ -33,6 +33,8 @@ public class MemberServiceImpl implements MemberService{
 			
 		}else {
 			//sns회원의 경우 자신의 프로필 변경할 수 있기때문에 mysql도 동기화 
+			//단, 넘겨받은멤버에는member_id가 누락되어있음 . 기존 회원정보를 가진 객체인 obj로부터 꺼내와서 넣어줄것 
+			member.setMember_id(obj.getMember_id());
 			memberDAO.update(member);
 			log.debug("업데이트");
 		}

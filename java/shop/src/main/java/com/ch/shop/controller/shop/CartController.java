@@ -1,31 +1,43 @@
 package com.ch.shop.controller.shop;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ch.shop.dto.Cart;
 import com.ch.shop.dto.Member;
+import com.ch.shop.dto.ResponseMessage;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@Slf4j
 public class CartController {
 	
 	@GetMapping("/cart/main")
-	public String getMain(HttpSession session) {
-		String viewName ="";
-		//로그인 세션 체크 (세션에 멤버있냐없냐) 
-		Member member = (Member) session.getAttribute("member");
-		if(member==null) {
-			viewName = "shop/member/login";
-		}else {
-			viewName = "shop/cart/list";
-		}
-		return viewName; 
+	public String getMain(HttpSession session,Model model) {
+		//세션에 들어있는 cart라는 key를 갖는 객체들을 List형태로 바꿔서 jsp까지 전달
+		
+		Map<Integer, Cart> cart = (Map)session.getAttribute("cart");
+	
+		List<Cart> cartList = new ArrayList<Cart>();
+		for(Map.Entry<Integer, Cart> entry : cart.entrySet()) {
+			log.debug("키는{},값은{}",entry.getKey() ,entry.getValue());
+			cartList.add(entry.getValue());
+		}                                                           
+		model.addAttribute("cartList",cartList); //결과저장 !jsp로보내주려면model필요 
+		
+		return "shop/cart/list";
 	}
 
 	/*
@@ -48,20 +60,38 @@ public class CartController {
 	- 데이터의 유효기간(TTL)을 명시할 수 있어, 개발자가 별도 삭제 작업을 하지 않아도 됨(마침 쿠키처럼)
 	*/
 	
-	@GetMapping("/cart/add")
-	public String addCart(@RequestParam(defaultValue ="0") int product_id, HttpSession session) {
+	@PostMapping("/cart/add")
+	@ResponseBody
+	public ResponseEntity<ResponseMessage> addCart(Cart cart, HttpSession session) {
+		//세션에서 꺼내서 cartDTO에 아주자 member_id (보안을위해)
 		
 		//클라이언트가 전송한 상품의 product_id, 개수 이용해 Cart생성 - 보관 
-		Cart cart = new Cart();
-		cart.setProduct_id(product_id);
-		cart.setEa(product_id);//받을 예정 
-		cart.setProduct_name(null); 
-		cart.setFilename(null);
-		cart.setPrice(product_id);
+		Member member = (Member) session.getAttribute("member");
+		log.debug("흠흠{}",member.getMember_id());
+		log.debug("product_id={}",cart.getProduct_id());
+		log.debug("product_name={}",cart.getProduct_name());
+		log.debug("price={}",cart.getPrice());
+		log.debug("Ea={}",cart.getEa());
 		
-		Map<Integer, Cart> map = new HashMap<Integer, Cart>();
+		cart.setMember_id(member.getMember_id());
+		
+		
+		Map<Integer, Cart> map = (Map<Integer, Cart>) session.getAttribute("cart"); 
+		
+		if(map == null) map = new HashMap<Integer, Cart>(); 
+		
+		Cart old = map.get(cart.getProduct_id());
+	    if (old == null) map.put(cart.getProduct_id(), cart);
+	    else old.setEa(old.getEa() + cart.getEa());
+	                                                                            
 		session.setAttribute("cart", map);
 		
-		return null; 
+		ResponseMessage msg = new ResponseMessage();
+		msg.setMsg("장바구니에 상품이 담겼습니다.");
+		//이 시점에 jackson 라이브러리를 직접사용하는 것이 아니라 ResponseBody에 의해 내부적으로 작동함. 
+		//스프링에서 지원하는 HTTP 응답전용객체(head+body 구성) 
+		
+		
+		return ResponseEntity.ok(msg); 
 	}
 }
