@@ -1,157 +1,167 @@
-<%@page import="com.ch.shop.dto.Cart"%>
-<%@page import="java.util.List"%>
-<%@page import="com.ch.shop.util.MoneyConverter"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <!DOCTYPE html>
 <html lang="zxx">
-<% List<Cart> cartList = (List)request.getAttribute("cartList"); %>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Ashion Template">
-    <meta name="keywords" content="Ashion, unica, creative, html">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ashion | Template</title>
+<meta charset="UTF-8">
+<meta name="description" content="Ashion Template">
+<meta name="keywords" content="Ashion, unica, creative, html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Ashion | Template</title>
 
-    <%@ include file="../inc/head_link.jsp" %>
+<%@ include file="../inc/head_link.jsp"%>
 </head>
 
 <body>
-    <!-- Page Preloder -->
-    <%@ include file="../inc/preloder.jsp" %>
+	<!-- Page Preloder -->
+	<%@ include file="../inc/preloder.jsp"%>
 
-    <!-- Offcanvas Menu Begin -->
-    <div class="offcanvas-menu-overlay"></div>
-    <div class="offcanvas-menu-wrapper">
-        <div class="offcanvas__close">+</div>
-        <ul class="offcanvas__widget">
-            <li><span class="icon_search search-switch"></span></li>
-            <li><a href="#"><span class="icon_heart_alt"></span>
-                <div class="tip">2</div>
-            </a></li>
-            <li><a href="#"><span class="icon_bag_alt"></span>
-                <div class="tip">2</div>
-            </a></li>
-        </ul>
-        <div class="offcanvas__logo">
-            <a href="./index.html"><img src="/static/template/img/logo.png" alt=""></a>
-        </div>
-        <div id="mobile-menu-wrap"></div>
-        <div class="offcanvas__auth">
-            <a href="#">Login</a>
-            <a href="#">Register</a>
-        </div>
-    </div>
-    <!-- Offcanvas Menu End -->
+	<!-- Offcanvas Menu Begin -->
+	<div class="offcanvas-menu-overlay"></div>
+	<div class="offcanvas-menu-wrapper">
+		<div class="offcanvas__close">+</div>
+		<ul class="offcanvas__widget">
+			<li><span class="icon_search search-switch"></span></li>
+			<li><a href="#"><span class="icon_heart_alt"></span>
+					<div class="tip">2</div> </a></li>
+			<li><a href="#"><span class="icon_bag_alt"></span>
+					<div class="tip">2</div> </a></li>
+		</ul>
+		<div class="offcanvas__logo">
+			<a href="./index.html"><img src="/static/template/img/logo.png"
+				alt=""></a>
+		</div>
+		<div id="mobile-menu-wrap"></div>
+		<div class="offcanvas__auth">
+			<a href="#">Login</a> <a href="#">Register</a>
+		</div>
+	</div>
+	<!-- Offcanvas Menu End -->
 
-    <!-- Header Section Begin -->
-    <%@ include file="../inc/header.jsp" %>
-    <!-- Header Section End -->
-	
+	<!-- Header Section Begin -->
+	<%@ include file="../inc/header.jsp"%>
+	<!-- Header Section End -->
+
 	<!-- BreadCrumb Begin -->
 	<div class="breadcrumb-option">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="breadcrumb__links">
-                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
-                        <span>Shopping cart</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>	
-    <!-- BreadCrumb End -->
-    
-    <!-- Cart Begin -->
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="breadcrumb__links">
+						<a href="./index.html"><i class="fa fa-home"></i> Home</a> <span>Shopping
+							cart</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- BreadCrumb End -->
+
+	<!-- Cart Begin -->
 	<section class="shop-cart spad">
-	        <div class="container">
-	            <div class="row">
-	                <div class="col-lg-12">
-	                    <div class="shop__cart__table">
-	                        <table>
-	                            <thead>
-	                                <tr>
-	                                    <th>Product</th>
-	                                    <th>Price</th>
-	                                    <th>Quantity</th>
-	                                    <th>Total</th>
-	                                    <th></th>
-	                                </tr>
-	                            </thead>
-	                            <tbody>
-	                            <%for(Cart cart :cartList){ %>
-	                                <tr>
-	                                    <td class="cart__product__item">
-	                                        <img src="img/shop-cart/cp-1.jpg" alt="">
-	                                        <div class="cart__product__item__title">
-	                                            <h6><%=cart.getProduct_name() %></h6>
-	                                        </div>
-	                                    </td>
-	                                    <td class="cart__price"><%=MoneyConverter.format(cart.getPrice())%></td>
-	                                    <td class="cart__quantity">
-	                                        <div class="pro-qty"><span class="dec qtybtn">-</span>
-	                                            <input type="text" value="<%=cart.getEa() %>">
-	                                        <span class="inc qtybtn">+</span></div>
-	                                    </td>
-	                                    <td class="cart__total"><%=MoneyConverter.format(cart.getPrice()*cart.getEa()) %></td>
-	                                    <td class="cart__close"><span class="icon_close"></span></td>
-	                                </tr>                            
-	                                <%} %>
-	                     
-	                            </tbody>
-	                        </table>
-	                    </div>
-	                </div>
-	            </div>
-	            <div class="row">
-	                <div class="col-lg-6 col-md-6 col-sm-6">
-	                    <div class="cart__btn">
-	                        <a href="#">Continue Shopping</a>
-	                    </div>
-	                </div>
-	                <div class="col-lg-6 col-md-6 col-sm-6">
-	                    <div class="cart__btn update__btn">
-	                        <a href="#"><span class="icon_loading"></span> Update cart</a>
-	                    </div>
-	                </div>
-	            </div>
-	            <div class="row">
-	                <div class="col-lg-6">
-	                    <div class="discount__content">
-	                        <h6>Discount codes</h6>
-	                        <form action="#">
-	                            <input type="text" placeholder="Enter your coupon code">
-	                            <button type="submit" class="site-btn">Apply</button>
-	                        </form>
-	                    </div>
-	                </div>
-	                <div class="col-lg-4 offset-lg-2">
-	                    <div class="cart__total__procced">
-	                        <h6>Cart total</h6>
-	                        <ul>
-	                            <li>Subtotal <span>$ 750.0</span></li>
-	                            <li>Total <span>$ 750.0</span></li>
-	                        </ul>
-	                        <a href="#" class="primary-btn">Proceed to checkout</a>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-	    </section>
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="shop__cart__table">
+						<table>
+							<thead>
+								<tr>
+									<th>Product</th>
+									<th>Price</th>
+									<th>Quantity</th>
+									<th>Total</th>
+									<th></th>
+								</tr>
+							</thead>
+								<!-- 아래의 app에 있는 영역을 Vue의 랜더링 영역으로  -->
+							<tbody id="app">
+									<tr v-for =" index in cartList"><!-- 뷰에서 사용하는 for문이라고 기재 -->
+										<td class="cart__product__item"><img
+											src="img/shop-cart/cp-1.jpg" alt="">
+											<div class="cart__product__item__title">
+												<h6>청바지..</h6>
+											</div></td>
+										<td class="cart__price"></td>
+										<td class="cart__quantity">
+											<div class="pro-qty">
+												<span class="dec qtybtn">-</span> <input type="text"
+													value="0"> <span class="inc qtybtn">+</span>
+											</div>
+										</td>
+										<td class="cart__total">total...</td>
+										<td class="cart__close"><span class="icon_close"></span></td>
+									</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-6">
+					<div class="cart__btn">
+						<a href="#">Continue Shopping</a>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6">
+					<div class="cart__btn update__btn">
+						<a href="#"><span class="icon_loading"></span> Update cart</a>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="discount__content">
+						<h6>Discount codes</h6>
+						<form action="#">
+							<input type="text" placeholder="Enter your coupon code">
+							<button type="submit" class="site-btn">Apply</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-lg-4 offset-lg-2">
+					<div class="cart__total__procced">
+						<h6>Cart total</h6>
+						<ul>
+							<li>Subtotal <span>$ 750.0</span></li>
+							<li>Total <span>$ 750.0</span></li>
+						</ul>
+						<a href="#" class="primary-btn">Proceed to checkout</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 	<!-- Cart End -->
-	
+
 	<!-- Instagram Begin -->
-	<%@ include file="../inc/insta.jsp" %>
+	<%@ include file="../inc/insta.jsp"%>
 	<!-- Instagram End -->
-	
+
 	<!-- Footer Section Begin -->
-	<%@ include file="../inc/footer.jsp" %>
+	<%@ include file="../inc/footer.jsp"%>
 	<!-- Footer Section End -->
-	
+
 	<!-- Js Plugins -->
-	<%@ include file="../inc/footer_link.jsp" %>
+	<%@ include file="../inc/footer_link.jsp"%>
+
+	<!-- Vue이용하면 개발자가 DOM랜더링 시 전통적인 DOM제어보다 훨씬 효율적으로 처리 가능  -->
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+	<script>
+	//뷰 애플리케이션 객체 생성하고 원하는 랜더링 영역인 div="app"연결 /*  */
+		const app = Vue.createApp({
+			data() {
+				return {//뷰 랜더링 영역에서 사용될 데이터 반환 
+					cartList: 3
+					}
+				}
+			})
+			
+			let vm = app.mount('#app') //연결 
+	//비동기로 장바구니 목록가져오기 
+	
+	</script>
 </body>
 
 </html>

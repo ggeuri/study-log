@@ -375,7 +375,8 @@
 		//장바구니 담기 요청을 비동기 방식으로 진행 
 		let p = new Promise(function(resolve , reject){
 			$.ajax({
-				url:"/cart/add",
+				/* url:"/cart/add", //세션기반 컨트롤러에 요청  */
+				url:"/cart/regist", //세션기반 컨트롤러에 요청 
 				method:"POST",
 				data:$("#detail-form").serialize(),				
 				success:function(result, status, xhr){

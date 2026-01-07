@@ -12,6 +12,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -23,6 +27,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.ch.shop.util.FileManager;
+
+import redis.clients.jedis.JedisPoolConfig;
 
 /*
  [RootConfig 역할]
@@ -166,6 +172,42 @@ public class RootConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	public String emailPassword(JndiTemplate jndiTemplate) throws Exception{
 		return (String)jndiTemplate.lookup("java:comp/env/email/app/password"); 
+	}
+	
+	/*----------------------------------------------------
+	Redis 데이터베이스 관련 빈 등록 
+	----------------------------------------------------*/
+	@Bean
+	public JedisPoolConfig jedisPollConfig() {
+		JedisPoolConfig config = new JedisPoolConfig();
+		config.setMaxTotal(50);
+		config.setMaxIdle(10);
+		config.setMinIdle(5);
+		
+		return config;
+	}
+	
+	@Bean
+	public RedisConnectionFactory redisConnectionFactory() {
+		JedisConnectionFactory factory = new JedisConnectionFactory();
+		factory.setHostName("localhost");
+		factory.setPort(6379);
+		factory.setUsePool(true);
+		factory.setPoolConfig(jedisPollConfig());
+		
+		return factory; 
+	}
+	
+	//마치 mybatis Spring에서의 SqlSessionTemplate와 비슷한 존재 
+	@Bean
+	public RedisTemplate<String, String> redisTemplate(){
+		RedisTemplate<String, String> template = new RedisTemplate<String, String>();
+		template.setConnectionFactory(redisConnectionFactory());
+		template.setKeySerializer(new StringRedisSerializer());
+		template.setHashKeySerializer(new StringRedisSerializer());
+		template.setHashValueSerializer(new StringRedisSerializer());
+		
+		return template; 
 	}
 	
 	
