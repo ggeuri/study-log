@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--Mapper사용시에는 DTO말고 매퍼경로-->
+<mapper namespace="com.ch.noticeapp.notice.repository.NoticeMapper">
+
+<!--    useGeneratedKeys 속성 이용하면 last_insert_id를 별도로 사용할 필요없음 -->
+    <insert id="insert" parameterType="Notice"  useGeneratedKeys="true" keyProperty="noticeId" keyColumn="notice_id">
+        insert into notice(title, writer, content) values(#{title},#{writer},#{content})
+    </insert>
+
+<!--  목록 가져오기 jpa에서 findAll명칭 많이 씀. 익숙해져라  -->
+    <select id = "findAll" resultType="Notice">
+        select notice_id, title, writer, content, regdate, hit from notice
+        order by notice_id desc
+    </select>
+
+<!--   한건 -->
+    <select id = "findById" parameterType="Long"  resultType="Notice">
+        select notice_id, title, writer, content, regdate, hit from notice
+        where notice_id = #{notice_id}
+    </select>
+
+    <update id="update" parameterType="Notice">
+        update notice set title=#{title}, writer=#{writer}, content=#{content}
+        where notice_id=#{notice_id}
+    </update>
+
+    <delete id="deleteById" parameterType="Long">
+        delete from notice where notice_id = #{notice_id}
+    </delete>
+
+    <update id="increaseHit" parameterType="int">
+        update notice set hit=hit+1 where notice_id =#{notice_id}
+    </update>
+
+
+</mapper>

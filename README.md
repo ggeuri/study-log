@@ -98,6 +98,8 @@
 | 2026-01-05 | shop/LoginCheckInterceptor, shop/ShopWebConfig, shop/CartController | 컨트롤러마다 세션 체크를 반복하면 누락/우회 리스크가 생기고, 장바구니가 요청마다 초기화되는 버그로 데이터가 누적되지 않음 | 인터셉터로 로그인 체크를 공통화하고(예외 경로/정적 리소스 제외), 장바구니는 세션에서 기존 Map을 조회 후 없을 때만 생성하도록 흐름을 정리해 상태 누적을 보장함. Redirect 경로는 컨텍스트 경로/루프 가능성을 함께 점검함. |
 | 2026-01-06 | com.ch.shop.controller.shop.CartController / LoginCheckInterceptor / detail.jsp | 세션 장바구니는 초기 null로 NPE가 나기 쉽고, 미로그인 AJAX 요청에 redirect/HTML이 내려가면 프론트(JSON 파싱)가 깨질 위험이 있음 | 장바구니는 Map으로 저장해 수량 누적을 O(1)로 처리하고, 화면은 List로 변환해 렌더링을 단순화한다. Interceptor에서 동기/비동기 요청을 분기해 AJAX는 401+JSON으로 통일하여 클라이언트 오류 처리를 안정화한다. 또한 실무에선 클라이언트가 보낸 가격/상품명은 변조 가능하므로 서버 조회로 확정하는 방향이 안전하다. |
 | 2026-01-07 | docs/20250107.md (vue-redis-notes) | Redis 기반 장바구니/세션 저장을 스키마 없이 설계하면 키 충돌·무한증가로 메모리 리스크가 커질 수 있음. | key prefix(cart:{memberId})로 네임스페이스를 분리하고, Hash(product_id→ea) + HINCRBY(원자적 증가)로 동시성 문제를 예방함. RedisTemplate 직렬화(StringRedisSerializer)로 타입 혼선을 줄이고, 조회/삭제/전체삭제 및 TTL 정책을 추가 구현 대상으로 정리함. |
+| 2026-01-19 | src/main/resources/mybatis/NoticeMapper.xml, src/main/resources/mybatis/mybatis-config.xml, src/main/resources/application.properties | MyBatis에서 XML 파라미터/namespace 기준이 어긋나면 런타임 바인딩 실패로 500 또는 조회/수정 무반영이 발생해 장애 원인 추적이 어려움. | 파라미터는 DB 컬럼명이 아니라 자바 시그니처/DTO 변수명 기준(#{noticeId})으로 통일하고, namespace는 Mapper 인터페이스 FQCN과 1:1로 맞춰 연결 오류를 차단했다. mapUnderscoreToCamelCase=true로 notice_id→noticeId 매핑을 자동화해 오타/수동매핑 리스크를 줄였고, mapper-locations/config-location을 명시해 설정 누락을 부팅 시점에 조기 감지하도록 했다. |
+
 ⸻
 
 🔗 Personal Project
