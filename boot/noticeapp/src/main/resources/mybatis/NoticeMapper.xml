@@ -19,20 +19,20 @@
 <!--   한건 -->
     <select id = "findById" parameterType="Long"  resultType="Notice">
         select notice_id, title, writer, content, regdate, hit from notice
-        where notice_id = #{notice_id}
+        where notice_id = #{noticeId}
     </select>
 
     <update id="update" parameterType="Notice">
         update notice set title=#{title}, writer=#{writer}, content=#{content}
-        where notice_id=#{notice_id}
+        where notice_id=#{noticeId}
     </update>
 
     <delete id="deleteById" parameterType="Long">
-        delete from notice where notice_id = #{notice_id}
+        delete from notice where notice_id = #{noticeId}
     </delete>
 
     <update id="increaseHit" parameterType="int">
-        update notice set hit=hit+1 where notice_id =#{notice_id}
+        update notice set hit=hit+1 where notice_id =#{noticeId}
     </update>
 
 

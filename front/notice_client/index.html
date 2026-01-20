@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Page Title</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+  <script src='main.js'></script>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --radius: 14px;
+      --shadow: 0 10px 24px rgba(17, 24, 39, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Noto Sans KR", "Malgun Gothic", Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    #wrapper {
+      width: 100%;
+      height: 800px;
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg);
+    }
+
+    .aside,
+    .content,
+    .detail {
+      height: 100%;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      /* 내용이 넘칠 때 레이아웃이 깨지지 않도록 바깥으로 삐져나옴 방지 */
+    }
+
+    .aside {
+      flex: 2;
+      border-top: 3px solid var(--blue);
+      /* 주의: --blue 변수가 정의되지 않으면 이 라인은 적용되지 않을 수 있음 */
+    }
+
+    .content {
+      flex: 6;
+    }
+
+    .detail {
+      flex: 2;
+      border-top: 3px solid var(--blue);
+      /* 주의: --blue 변수가 정의되지 않으면 이 라인은 적용되지 않을 수 있음 */
+    }
+
+    /* UI 컨셉: 전체 미니멀 톤 유지(포인트 컬러는 최소로) */
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+    }
+
+    input[type="text"],
+    textarea,
+    button {
+      width: 100%;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    textarea {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      background: #fafafa;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      background: #fff;
+      border-color: rgba(59, 130, 246, 0.7);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18);
+      /* 포커스 시 피드백 제공(사용성/접근성) */
+    }
+
+    textarea {
+      height: 220px;
+      resize: none;
+      line-height: 1.5;
+    }
+
+    button {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.08s;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .aside button {
+      margin-top: auto;
+      /* 버튼을 폼 하단에 고정(남는 공간을 위로 밀어내기) */
+      border-color: transparent;
+      background: #f9fafb;
+    }
+
+    .detail button {
+      background: #f9fafb;
+    }
+
+    .detail button:last-child {
+      background: #fff;
+    }
+
+    .detail form button:first-of-type {
+      margin-top: auto;
+    }
+
+    .detail form button+button {
+      margin-top: 8px;
+    }
+
+    .content {
+      background: var(--panel);
+    }
+
+    .content {
+      overflow: auto;
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 14px;
+    }
+
+    .content thead th {
+      text-align: left;
+      padding: 10px 12px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--line);
+      background: #fafafa;
+      font-weight: 700;
+
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .content tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+
+    .content tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .content tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .content tbody tr {
+      cursor: pointer;
+    }
+
+    .content th:nth-child(1),
+    .content td:nth-child(1),
+    .content th:nth-child(5),
+    .content td:nth-child(5) {
+      width: 72px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .content th:nth-child(3),
+    .content td:nth-child(3) {
+      width: 140px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .content th:nth-child(4),
+    .content td:nth-child(4) {
+      width: 140px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .content th:nth-child(2),
+    .content td:nth-child(2) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .content th:nth-child(3),
+    .content td:nth-child(3) {
+      text-align: center;
+    }
+
+    .content th:nth-child(2),
+    .content td:nth-child(2) {
+      text-align: left;
+    }
+  </style>
+
+  <!-- CDN 방식(학습/데모용): React 런타임 로드 -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel(학습/데모용): 브라우저에서 JSX를 즉석 변환 -->
+  <!-- 실무에서는 Vite/Webpack 빌드로 JSX를 미리 변환하므로 CDN Babel은 보통 쓰지 않음 -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+</head>
+
+<body>
+  <!-- React가 렌더링할 컨테이너(root). 이 div 내부를 React가 관리 -->
+  <div id="app"></div>
+
+  <script  type="text/babel">
+    // =========================================================
+    // [React/JSX 핵심 규칙]
+    // 1) JSX에서는 class 대신 className 사용
+    // 2) 단일 태그는 반드시 닫기: <input />
+    // 3) props: 부모→자식으로 값/함수를 전달하는 통로 (자식에서 읽기 전용)
+    //
+    // [설계 핵심(부모-자식 역할 분리)]
+    // - 자식(RegistForm): 입력 UI + “등록 버튼 클릭” 이벤트 발생
+    // - 부모(App): 서버 요청(fetch), 응답 처리, 상태(state) 갱신
+    //   => 데이터/로직이 App에 모여야 등록/목록/상세/수정/삭제로 확장하기 쉬움
+    // =========================================================
+
+    // [좌측] 글 등록 폼(UI + 입력값 수집)
+    function RegistForm(props) {
+      // ---------------------------------------------------------
+      // [매우 중요] Hook(useState) 규칙
+      // - useState는 “컴포넌트 함수 최상단”에서 호출해야 합니다.
+      // - handleClick 같은 이벤트 함수 안에서 useState를 호출하면
+      //   Hook 규칙 위반/동작 불안정/에러 가능성이 큽니다.
+      // - 학습 포인트: state는 "컴포넌트가 렌더링될 때" 세팅되어야 합니다.
+      // ---------------------------------------------------------
+      const [title, setTitle] = React.useState("");
+      const [writer, setWriter] = React.useState("");
+      const [content, setContent] = React.useState("");
+
+      function handleClick() {
+
+        // [요청 payload] 실제 입력값(title/writer/content)을 담아 notice 객체 생성
+        const notice = {
+          title: title,
+          writer: writer,
+          content: content
+        }
+
+        // 부모가 내려준 등록 콜백에 notice를 전달
+        props.onRegist(notice);
+      }
+
+      return (
+        <div className="aside">
+          <form>
+
+            <input type="text" placeholder="제목" onChange={e => setTitle(e.target.value)} />
+            <input type="text" placeholder="작성자" onChange={e => setWriter(e.target.value)} />
+            <textarea placeholder="내용" onChange={e => setContent(e.target.value)}></textarea>
+
+            <button type="button" onClick={handleClick}>{props.bt}</button>
+          </form>
+        </div>
+      );
+    }
+
+    // [가운데] 목록 영역(현재는 빈 컨테이너, 추후 notices.map으로 렌더링)
+    function NoticeList(props) { //자식컴포넌트가 부모 컴포넌트의 변수,메서드 직접 접근할수 없으므로 주로 props이용 
+      return (
+        <div className="content">
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>등록일</th>
+                <th>조회수</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/*map은 js배열매서드 중 하나. 선언적 프로그래밍 중 함수형 프로그래밍 원칙적용 눈에 보이지 않지만 반복문 스스로 수행 
+                몇번째 반복인지 중간에 개입불가*/}
+              {props.noticeList.map(notice=> (
+                  <tr key={notice.noticeId} onClick = {()=> props.onSelectOne()}>
+                    <td >1</td>
+                    <td>{notice.title}</td>
+                    <td>{notice.writer}</td>
+                    <td>{notice.regdate}</td>
+                    <td>{notice.hit}</td>
+                  </tr>
+                ))                
+              }
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    // [우측] 상세/수정/삭제 영역(현재는 UI만, 추후 선택된 글 표시/수정/삭제 연결)
+    function DetailForm() {
+      return (
+        <div className="detail">
+          <form>
+            <input type="text" placeholder="제목" />
+            <input type="text" placeholder="작성자" />
+            <textarea placeholder="내용"></textarea>
+            <button type="button">수정</button>
+            <button type="button">삭제</button>
+          </form>
+        </div>
+      );
+    }
+
+    // [부모] App: 공통 상태 + 공통 로직의 중심
+    function App() {
+      //서버로부터 가져온 목록데이터를 화면에 표시할 UI에 엮게될 바인딩 변수 선언
+      const [noticeList, setNoticeList] = React.useState([]);
+
+
+      // [state] 단일 notice 상태(학습용 구조)
+      // - 게시판으로 확장 시 보통:
+      //   notices(배열), selectedNotice(선택된 글) 등을 추가하는 구조로 발전
+      const [notice, setNotice] = React.useState({
+        noticeId: "",
+        title: "",
+        writer: "",
+        content: "",
+        regdate: "",
+        hit: 0
+      });
+
+      /*------------------
+      목록가져오기 
+      React.useEffect : 컴포넌트가 랜더링 된 직후 실행해야 할 업무 부수효과를 다룰때 자주 사용되는 메서드 
+      ex) 랜더링 직후 서버 호출, DOM접근 등 랜더링 직후 1회만 실행 
+      ------------------*/
+      React.useEffect(() => {
+        fetch("http://localhost:9999/api/notices", { method: "GET" })
+          .then(res => res.json())//첫번째 then()서버에서 응답왔을때 수행됨(성공/실패모름). 만일 성공했다면 json문자열로 변경
+          .then(data => {//여기서의 then은 첫번째 then에서 반환된 promise가 resolve하면서 넘겨준 값 
+            setNoticeList(data);
+          })
+          .catch(err => console.log(err));
+      }, []);
+
+      // [등록] 자식(RegistForm)에서 전달한 notice를 서버에 POST
+      function regist(notice) {
+        // fetch(url, options)
+        // - method: POST
+        // - headers: JSON 전송 명시
+        // - body: 실제 데이터(JSON 문자열). 객체를 그대로 넣으면 안 되고 JSON.stringify 필요
+        fetch("http://localhost:9999/api/notices", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(notice)
+        })
+          // [then 1] Response → JSON 파싱(파싱도 비동기라 Promise 반환)
+          .then(res => res.json())
+          // [then 2] 파싱된 JSON(서버 응답 데이터)을 실제로 사용하는 단계
+          // - 정석: 여기서 setNotice(...) 또는 목록 배열에 추가(setNotices(...)) 등 상태 갱신
+          .then(saveNotice => {
+            console.log("savedNotice is", saveNotice)
+          })
+          // [에러 처리] 네트워크 오류/예외 처리
+          // - 실무에서는 res.ok 체크 + 에러 메시지 표준화도 함께 진행하는 편
+          .catch(err => console.log(err));
+      }
+
+      /*------------------
+      상세보기 
+      ------------------*/
+
+      function selectOne(){
+        alert("부모인 App 메서드 호출 성공 ")
+      }
+
+      return (
+        <div id="wrapper">
+          <RegistForm bt="등록" onRegist={regist} />
+          <NoticeList noticeList={noticeList} onSelectOne={selectOne} />
+          <DetailForm />
+        </div>
+      );
+    }
+
+    // React 18 렌더링 시작
+    // 1) createRoot로 root 생성(React가 관리할 DOM 지정)
+    // 2) render로 최상위 컴포넌트를 화면에 마운트
+    const root = ReactDOM.createRoot(document.getElementById("app"));
+    root.render(<App />);
+  </script>
+</body>
+
+</html>

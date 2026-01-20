@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+        <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <!--
+      [1] React는 "어디에 UI를 붙일지" 기준이 되는 컨테이너(root)가 필요합니다.
+      - 이 div가 React 앱이 마운트(붙는) 되는 자리입니다.
+      - React는 이 요소 내부를 자신이 렌더링한 결과로 관리/갱신합니다.
+      - 즉, HTML에서 준비해 둔 빈 공간에 React가 화면을 그린다고 이해하면 됩니다.
+    -->
+    <div id="app"></div>
+
+    <script type="text/babel">
+        // [2] 컴포넌트(Component) 정의
+        // - 컴포넌트는 "화면 조각(UI 단위)"을 함수로 만든 것입니다.
+        // - React에서는 컴포넌트가 "화면에 그릴 결과(JSX)"를 반환(return)해야 합니다.
+        // - 반환하는 JSX는 결국 React가 해석해서 DOM으로 변환해 붙입니다.
+        //
+        // [3] JSX 문법 주의점
+        // - 태그가 한 줄이어도 JSX는 "하나의 최상위 요소"로 반환되는 형태가 기본입니다.
+        // - 여러 줄/여러 요소를 반환해야 하면, ( ... )로 묶어 가독성을 높입니다.
+        //   (여러 요소인 경우 보통 하나로 감싸거나 Fragment를 사용하지만, 여기서는 개념만 이해하면 됩니다.)
+        
+        function MyCar(){ //여기서 조립 부모컴포넌트 
+            return (
+                <div>
+                    <h1>나는 레인지로버다.</h1>
+                    <Body/> 
+                    <Wheel/>
+                </div>
+            );
+        }
+
+        function Body(){ //자식컴포넌트 
+            return <div>몸모모모모몸냠냠냐먀냐냠</div>;
+        }
+        function Wheel(){
+            return <div>돌돌돌돌</div>;
+        }
+
+        // [4] React 18 렌더링 시작점: Root 생성
+        // - createRoot(...)는 "이 DOM을 React가 관리할 루트로 삼겠다"는 선언입니다.
+        // - document.getElementById("app")로 위에서 만든 컨테이너 div를 찾아 연결합니다.
+        // - 앞으로 React가 화면을 갱신할 때, 이 루트 아래 UI를 기준으로 업데이트가 일어납니다.
+        const root = ReactDOM.createRoot(document.getElementById("app"));
+
+        // [5] root.render(...)는 "무엇을 화면에 그릴지"를 전달하는 단계입니다.
+        // - 보통 최상위 컴포넌트(<App /> 같은)를 넘겨서 전체 UI 트리를 렌더링합니다.
+        // - 컴포넌트는 HTML 태그처럼 사용할 수 있습니다. 예) <MyCar />
+        // - render가 호출되면 React가 컴포넌트를 실행(평가)하여 반환된 JSX를 DOM에 반영합니다.
+        //
+        // [6] 현재 코드는 render 호출이 주석 처리되어 있어, 실제 화면에는 아무것도 그려지지 않습니다.
+        root.render(<MyCar/>);
+
+    </script>
+</body>
+</html>
