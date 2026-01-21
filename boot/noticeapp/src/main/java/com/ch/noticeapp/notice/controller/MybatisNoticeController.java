@@ -12,8 +12,8 @@ import java.net.URI;
 import java.util.List;
 
 @Slf4j
-@RestController // ResponseBody명시할 필요없음 ( // JAVA 클래스를 -> JSON으로 *JACKSON이)
-@RequestMapping("/api/notices")
+@RestController // ResponseBody명시할 필요없   음 ( // JAVA 클래스를 -> JSON으로 *JACKSON이)
+//@RequestMapping("/api/notices")
 public class MybatisNoticeController {
 
     private final MybatisNoticeService noticeService; //final붙이면 반드시 초기화하고 써야

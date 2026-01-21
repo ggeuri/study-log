@@ -1,6 +1,0 @@
-spring:
-  application:
-    name:noticeapp
-
-server:
-  port: 9999

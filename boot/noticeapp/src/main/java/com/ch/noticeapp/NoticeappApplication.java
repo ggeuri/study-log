@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.ch.noticeapp.notice.repository")
+//@MapperScan("com.ch.noticeapp.notice.repository")
 public class NoticeappApplication {
 
     public static void main(String[] args) {

@@ -36,7 +36,15 @@ dependencies {
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Validation (버전 쓰지 말고 Boot BOM 따라가기)
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
+
+
 
 tasks.named('test') {
     useJUnitPlatform()

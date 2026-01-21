@@ -96,7 +96,7 @@ public class MybatisNoticeService {
             if(affected != 1){
                 throw new NoticeException(NoticeErrorCode.NOTICE_UPDATE_FAIL);
             }
-            return notice;
+            return noticeMapper.findById(notice.getNoticeId());
         } catch (Exception e){
             e.printStackTrace();
             throw new NoticeException(NoticeErrorCode.NOTICE_UPDATE_FAIL);
