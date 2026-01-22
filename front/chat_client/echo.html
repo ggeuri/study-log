@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- [React UMD 로드]
+      - 번들러 없이 브라우저에서 React 실행(학습용)
+      - react: 컴포넌트/Hook 제공, react-dom: 실제 DOM에 렌더링
+      - babel-standalone: 브라우저에서 JSX를 즉석 변환(type="text/babel" 필요)
+      - 실무: 성능/캐시/보안 때문에 보통 Vite/Webpack으로 사전 빌드
+    -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+
+<body>
+    <!-- [React 마운트 지점]
+      - React가 그린 화면이 붙는 자리(root container)
+    -->
+    <div id="app"></div>
+
+    <!-- [JSX 사용 선언]
+      - 브라우저는 JSX를 모름 → Babel이 변환해줘야 함
+      - 그래서 type="text/babel"이 필수(학습용 환경)
+    -->
+    <script type="text/babel">
+        function App() {
+            // [State(useState) = 화면에 반영되는 값]
+            // - 값이 바뀌면 자동 리렌더링 → UI가 즉시 갱신됨
+            // - status: 연결상태 표시
+            // - input: 입력창 value 바인딩(Controlled Input)
+            // - msgList: 수신 메시지 목록(추가되면 화면 리스트도 갱신)
+            const [status, setStatus] = React.useState("DISCONNECTED");
+            const [input, setInput] = React.useState("");
+            const [user, setUser] = React.useState("");
+            const [msgList, setMsgList] = React.useState([]);
+
+            // [Ref(useRef) = 렌더링과 무관하지만 유지해야 하는 값]
+            // - WebSocket 객체는 "화면 값"이 아니라 "연결 핸들"이므로 ref에 보관
+            // - state에 넣으면 불필요한 리렌더링/객체 관리 문제 → ref가 적합
+            // - 실제 소켓은 wsRef.current에 저장
+            const wsRef = React.useRef(null);
+
+            function connect() {
+                // [중복 연결 방지]
+                // - 이미 OPEN이면 다시 연결 생성하지 않도록 return
+                if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+                    return;
+                }
+
+                // [WebSocket 연결 생성]
+                // - ws://...로 서버와 지속 연결(서버↔클라 양방향, 실시간)
+                const ws = new WebSocket("ws://localhost:9991/ws/echo");
+
+                // [연결 객체 저장]
+                // - 이후 send/disconnect, 이벤트 핸들러에서 이 객체를 계속 사용
+                wsRef.current = ws;
+
+                // [상태 표시(접속 시도)]
+                // - 실제 연결 완료는 onopen에서 확정
+                setStatus("접속중...");
+
+                // [WebSocket 이벤트 핸들러]
+                // - onopen   : 연결 성공(Handshake 완료)
+                // - onclose  : 연결 종료
+                // - onerror  : 에러 발생(네트워크/서버/프로토콜 이슈 등)
+                // - onmessage: 서버가 보낸 메시지 수신
+                ws.onopen = () => {
+                    setStatus("CONNECTED");
+                }
+
+                ws.onclose = () => {
+                    setStatus("DISCONNECTED");
+                }
+
+                ws.onerror = () => {
+                    setStatus("ERROR");
+                }
+
+                // [메시지 수신 처리]
+                // - event.data: 서버가 보낸 실제 문자열(또는 Blob 등)
+                // - msgList는 배열이므로 "이전 배열 + 새 메시지"로 누적
+                // - prev: 업데이트 직전의 최신 state(비동기 setState 안전 패턴)
+                // - ...prev: 배열 펼치기(spread) → 기존 요소 유지 + 뒤에 추가
+                ws.onmessage = (event) => {
+                    console.log("메시지도착", event.data);
+                    setMsgList(prev => [...prev, event.data]);
+                };
+            }
+
+            // [메시지 전송]
+            // - 소켓이 존재 + OPEN 상태일 때만 send 가능
+            // - input 전송 후 입력창 초기화
+            const sendMessage = () => {
+                // ※ 방어 로직 의도: "미접속/비정상 상태면 전송 금지"
+                if (!wsRef.current && wsRef.current.readyState !== WebSocket.OPEN) {
+                    return;
+                }
+
+                let payload = {
+                    "id": user,
+                    "message": input,
+                    "icon": "smile"
+                }
+                let data = JSON.stringify(payload);
+                wsRef.current.send(data);
+                setInput("");
+            }
+
+            function disconnect() {
+                // [연결 종료]
+                // - close() 호출하면 onclose 이벤트가 발생하며 status도 DISCONNECTED로 갱신됨
+                wsRef.current.close();
+            }
+
+            // [UI 렌더링]
+            // - status: 현재 연결 상태 표시
+            // - input: value/onChange로 상태와 동기화(Controlled Component)
+            // - msgList.map(): 수신 메시지를 <li>로 렌더링
+            // - key: React가 리스트 변경을 효율적으로 추적하기 위한 식별자
+            return (<div id="wrapper">
+                <h2>WebSocket Echo 클라이언트</h2>
+
+                <div>
+                    <b>Status: {status}</b>
+                </div>
+
+                <div>
+                    <button onClick={connect}>Connect</button>
+                    <button onClick={disconnect}>DisConnect</button>
+                </div>
+
+                <div>
+                    <div>
+                        <input type="text" placeholder="사용자명 입력" value={user}
+                            onChange={e => setUser(e.target.value)} />
+                    </div>
+
+                    <div>
+                        <input type="text"
+                            value={input}
+                            placeholder="메시지 입력"
+                            onChange={e => setInput(e.target.value)} />
+                    </div>
+
+                    <div>
+                        <select>
+                            <option value="smile">smile</option>
+                            <option value="cry">cry</option>
+                            <option value="jump">jump</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <button onClick={sendMessage}>Send</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>Received Message</h4>
+                    <ul>
+                        {msgList.map((msg, idx) => (<li key={idx}>{msg}</li>))}
+                    </ul>
+                </div>
+            </div>);
+        }
+
+        // [React 18 루트 생성 & 렌더]
+        // - #app에 React 앱을 마운트하고 App 컴포넌트를 화면에 그림
+        const root = ReactDOM.createRoot(document.getElementById("app"));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

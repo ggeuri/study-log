@@ -55,7 +55,7 @@ public class Notice {
     private LocalDateTime regdate;
 
     @Column(name = "hit")
-    private Integer hit;
+    private int hit;
 
     /* ======================
      * 도메인 메서드(상태 변경을 통제)
@@ -65,7 +65,6 @@ public class Notice {
         this.title = title;
         this.writer = writer;
         this.content = content;
-        this.hit = 0; // 기본값 세팅(선택)
     }
 
     // 수정은 Setter 대신 메서드로 통제
@@ -77,7 +76,6 @@ public class Notice {
 
     // 조회수 증가 로직
     public void increaseHit() {
-        if (this.hit == null) this.hit = 0;
         this.hit += 1;
     }
 }

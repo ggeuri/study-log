@@ -6,8 +6,6 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title>Page Title</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-  <script src='main.js'></script>
   <style>
     :root {
       --bg: #f6f7fb;
@@ -52,13 +50,14 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      /* 내용이 넘칠 때 레이아웃이 깨지지 않도록 바깥으로 삐져나옴 방지 */
+      /* ✅ 레이아웃 안정화: 내부 콘텐츠가 커져도 바깥으로 삐져나오지 않도록 */
     }
 
     .aside {
       flex: 2;
       border-top: 3px solid var(--blue);
-      /* 주의: --blue 변수가 정의되지 않으면 이 라인은 적용되지 않을 수 있음 */
+      /* ⚠️ 보강: --blue 변수가 :root에 정의되어 있지 않으면 실제로 보더가 적용되지 않을 수 있음
+         - 실무에서는 :root { --blue: #3b82f6; } 같은 기본값을 두는 편 */
     }
 
     .content {
@@ -68,10 +67,10 @@
     .detail {
       flex: 2;
       border-top: 3px solid var(--blue);
-      /* 주의: --blue 변수가 정의되지 않으면 이 라인은 적용되지 않을 수 있음 */
+      /* ⚠️ 보강: aside와 동일(blue 변수 미정의 시 적용 안 됨) */
     }
 
-    /* UI 컨셉: 전체 미니멀 톤 유지(포인트 컬러는 최소로) */
+    /* UI 컨셉: 전체 미니멀 톤 유지(포인트 컬러 최소) */
 
     form {
       display: flex;
@@ -102,7 +101,7 @@
       background: #fff;
       border-color: rgba(59, 130, 246, 0.7);
       box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18);
-      /* 포커스 시 피드백 제공(사용성/접근성) */
+      /* ✅ 보강: 포커스 피드백(접근성/사용성) - 입력 중인 필드를 명확하게 표시 */
     }
 
     textarea {
@@ -127,7 +126,7 @@
 
     .aside button {
       margin-top: auto;
-      /* 버튼을 폼 하단에 고정(남는 공간을 위로 밀어내기) */
+      /* ✅ 폼 하단 고정: flex column에서 남는 공간을 위로 밀어 버튼이 하단에 위치 */
       border-color: transparent;
       background: #f9fafb;
     }
@@ -154,6 +153,7 @@
 
     .content {
       overflow: auto;
+      /* ✅ 보강: 목록이 길어질 때 가운데 영역만 스크롤되도록 */
     }
 
     .content table {
@@ -174,6 +174,7 @@
       position: sticky;
       top: 0;
       z-index: 1;
+      /* ✅ 보강: 스크롤 시 헤더 고정(가독성/사용성 상승) */
     }
 
     .content tbody td {
@@ -192,6 +193,7 @@
 
     .content tbody tr {
       cursor: pointer;
+      /* ✅ 보강: 클릭 가능한 행임을 UX로 전달 */
     }
 
     .content th:nth-child(1),
@@ -236,63 +238,77 @@
     }
   </style>
 
-  <!-- CDN 방식(학습/데모용): React 런타임 로드 -->
+  <!-- ✅ 학습/데모용(CDN): React 런타임 로드 -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-  <!-- Babel(학습/데모용): 브라우저에서 JSX를 즉석 변환 -->
-  <!-- 실무에서는 Vite/Webpack 빌드로 JSX를 미리 변환하므로 CDN Babel은 보통 쓰지 않음 -->
+  <!-- ✅ 학습/데모용(CDN): Babel Standalone
+       - 브라우저에서 JSX를 즉석 변환(type="text/babel")
+       - 실무에서는 Vite/Webpack 등 번들러가 빌드 시 JSX를 미리 변환하므로 보통 사용하지 않음 -->
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
 </head>
 
 <body>
-  <!-- React가 렌더링할 컨테이너(root). 이 div 내부를 React가 관리 -->
+  <!-- ✅ React Root: 이 div 내부를 React가 렌더링/관리 -->
   <div id="app"></div>
 
-  <script  type="text/babel">
+  <script type="text/babel">
     // =========================================================
-    // [React/JSX 핵심 규칙]
+    // [React/JSX 기본 규칙]
     // 1) JSX에서는 class 대신 className 사용
     // 2) 단일 태그는 반드시 닫기: <input />
-    // 3) props: 부모→자식으로 값/함수를 전달하는 통로 (자식에서 읽기 전용)
+    // 3) props: 부모 → 자식으로 값/함수를 전달(자식은 읽기 전용)
     //
-    // [설계 핵심(부모-자식 역할 분리)]
-    // - 자식(RegistForm): 입력 UI + “등록 버튼 클릭” 이벤트 발생
-    // - 부모(App): 서버 요청(fetch), 응답 처리, 상태(state) 갱신
-    //   => 데이터/로직이 App에 모여야 등록/목록/상세/수정/삭제로 확장하기 쉬움
+    // [구조 설계(핵심)]
+    // - 자식 컴포넌트: 화면(UI)와 사용자 이벤트만 담당
+    // - 부모(App): 서버통신(fetch) + 상태(state) 관리 중심
+    //
+    // ✅ 왜 이렇게 나누는가?
+    // - CRUD(등록/목록/상세/수정/삭제)로 확장할수록
+    //   "데이터의 진실(SoT: Source of Truth)"이 한 곳(App)에 있어야
+    //   목록/상세/폼 입력 값 동기화가 깨지지 않습니다.
     // =========================================================
 
-    // [좌측] 글 등록 폼(UI + 입력값 수집)
+
+    // =========================================================
+    // [좌측] RegistForm: 등록 폼(UI + 입력값 수집)
+    //
+    // 역할
+    // - 입력값(title/writer/content)을 state로 관리
+    // - "등록" 버튼 클릭 시 notice 객체를 만들어 부모에게 전달(props.onRegist)
+    // - 실제 POST(fetch)는 부모(App)에서 처리 (관심사 분리)
+    // =========================================================
     function RegistForm(props) {
       // ---------------------------------------------------------
-      // [매우 중요] Hook(useState) 규칙
-      // - useState는 “컴포넌트 함수 최상단”에서 호출해야 합니다.
-      // - handleClick 같은 이벤트 함수 안에서 useState를 호출하면
-      //   Hook 규칙 위반/동작 불안정/에러 가능성이 큽니다.
-      // - 학습 포인트: state는 "컴포넌트가 렌더링될 때" 세팅되어야 합니다.
+      // [Hook(useState) 규칙 - 매우 중요]
+      // - Hook은 "컴포넌트 함수 최상단"에서만 호출해야 합니다.
+      // - 이벤트 함수(handleClick) 안/조건문 안에서 호출하면
+      //   렌더링마다 Hook 호출 순서가 바뀔 수 있어 에러/오동작 위험이 큼
+      //
+      // ✅ state가 필요한 이유
+      // - input 값은 타이핑할 때마다 바뀌므로, React state로 보관해야
+      //   버튼 클릭 시 payload(JSON)로 만들 수 있습니다.
       // ---------------------------------------------------------
       const [title, setTitle] = React.useState("");
       const [writer, setWriter] = React.useState("");
       const [content, setContent] = React.useState("");
 
       function handleClick() {
-
-        // [요청 payload] 실제 입력값(title/writer/content)을 담아 notice 객체 생성
+        // [payload] 입력값을 notice 객체로 묶어 부모에게 전달
         const notice = {
           title: title,
           writer: writer,
           content: content
-        }
+        };
 
-        // 부모가 내려준 등록 콜백에 notice를 전달
+        // 부모가 내려준 콜백 호출 → 부모(App)가 서버 POST 수행
         props.onRegist(notice);
       }
 
       return (
         <div className="aside">
           <form>
-
             <input type="text" placeholder="제목" onChange={e => setTitle(e.target.value)} />
             <input type="text" placeholder="작성자" onChange={e => setWriter(e.target.value)} />
             <textarea placeholder="내용" onChange={e => setContent(e.target.value)}></textarea>
@@ -303,7 +319,18 @@
       );
     }
 
-    // [가운데] 목록 영역(현재는 빈 컨테이너, 추후 notices.map으로 렌더링)
+
+    // =========================================================
+    // [가운데] NoticeList: 목록 출력(렌더링 전용)
+    //
+    // 역할
+    // - props.noticeList(배열)를 받아 테이블로 렌더링
+    // - 행 클릭 시 "선택된 notice"를 부모에게 전달(props.onSelectOne)
+    //
+    // ✅ 자식이 부모 변수/메서드에 직접 접근할 수 없는 이유
+    // - 컴포넌트는 서로 독립적이며, 데이터는 props로만 내려오고
+    //   이벤트는 콜백(props로 받은 함수)으로만 올라갑니다.
+    // =========================================================
     function NoticeList(props) { //자식컴포넌트가 부모 컴포넌트의 변수,메서드 직접 접근할수 없으므로 주로 props이용 
       return (
         <div className="content">
@@ -318,17 +345,25 @@
               </tr>
             </thead>
             <tbody>
-              {/*map은 js배열매서드 중 하나. 선언적 프로그래밍 중 함수형 프로그래밍 원칙적용 눈에 보이지 않지만 반복문 스스로 수행 
-                몇번째 반복인지 중간에 개입불가*/}
-              {props.noticeList.map(notice=> (
-                  <tr key={notice.noticeId} onClick = {()=> props.onSelectOne()}>
-                    <td >1</td>
-                    <td>{notice.title}</td>
-                    <td>{notice.writer}</td>
-                    <td>{notice.regdate}</td>
-                    <td>{notice.hit}</td>
-                  </tr>
-                ))                
+              {/* =====================================================
+                 [Array.map 렌더링]
+                 - map은 "배열 → UI 목록"으로 바꿀 때 가장 흔히 사용하는 방식
+                 - 선언형(Declarative) 렌더링: 반복 제어(break 등)는 하지 않고
+                   filter/map 조합으로 "무엇을 보여줄지"를 표현합니다.
+                 
+                 [key의 의미 - 실무 중요]
+                 - key는 React가 리스트 항목을 추적/최적화할 때 필요합니다.
+                 - 보통 DB PK(noticeId) 같은 "항상 유일한 값"을 사용합니다.
+              ====================================================== */}
+              {props.noticeList.map(notice => (
+                <tr key={notice.noticeId} onClick={() => props.onSelectOne(notice)}>
+                  <td >1</td>
+                  <td>{notice.title}</td>
+                  <td>{notice.writer}</td>
+                  <td>{notice.regdate}</td>
+                  <td>{notice.hit}</td>
+                </tr>
+              ))
               }
             </tbody>
           </table>
@@ -336,30 +371,94 @@
       );
     }
 
-    // [우측] 상세/수정/삭제 영역(현재는 UI만, 추후 선택된 글 표시/수정/삭제 연결)
-    function DetailForm() {
+
+    // =========================================================
+    // [우측] DetailForm: 상세/수정/삭제 UI
+    //
+    // 역할
+    // - 부모가 내려준 props.notice(선택된 글)를 화면에 보여줌
+    // - 수정/삭제 버튼 클릭 시 부모 콜백(props.onUpdate / props.onDel) 호출
+    //
+    // ✅ 왜 로컬 state(title/writer/content)를 따로 두나?
+    // - props.notice를 그대로 input value로 묶으면 "타이핑"이 곧바로 부모 상태 변경으로 이어져
+    //   구조가 복잡해집니다.
+    // - 그래서 "선택된 글(props.notice)" → "폼 입력용 로컬 state"로 복사해 사용합니다.
+    // =========================================================
+    function DetailForm(props) {
+      const [title, setTitle] = React.useState(""); //바인드변수(폼 입력 값)
+      const [writer, setWriter] = React.useState("");
+      const [content, setContent] = React.useState("");
+      const selectedId = !!props.notice.noticeId;
+
+      // =========================================================
+      // [useEffect: 렌더링 이후 실행되는 부수효과 처리]
+      //
+      // 실행 시점
+      // 1) 최초 렌더링 후 1회
+      // 2) 의존성 배열의 값이 바뀔 때마다
+      //
+      // 여기서는 props.notice가 바뀔 때마다(= 다른 글을 선택할 때마다)
+      // 우측 폼 입력값을 그 글 내용으로 "동기화"합니다.
+      // =========================================================
+      React.useEffect(() => {
+        setTitle(props.notice.title);
+        setWriter(props.notice.writer);
+        setContent(props.notice.content);
+      }, [props.notice]); // 감시대상: props.notice
+
+      function handleEdit(onUpdate) {
+        // =========================================================
+        // [선택 여부 체크]
+        // - !! 값 : truthy/falsy를 boolean으로 강제 변환
+        // - noticeId가 없으면 아직 글을 선택하지 않은 상태로 판단
+        // =========================================================
+        if (selectedId == false) {
+          alert("선택부터 하십쇼");
+        }
+
+        const payload = {
+          title: title,
+          writer: writer,
+          content: content
+        };
+
+        // 부모(App)에게 수정 요청 위임
+        props.onUpdate(props.notice.noticeId, payload);
+      }
+
+      function handleDelete(onDeleteOne) {
+        // 부모(App)에게 삭제 요청 위임
+        if (selectedId == false) {
+          alert("선택부터 하십쇼");
+        }
+        props.onDeleteOne(props.notice.noticeId);
+      }
+
       return (
         <div className="detail">
           <form>
-            <input type="text" placeholder="제목" />
-            <input type="text" placeholder="작성자" />
-            <textarea placeholder="내용"></textarea>
-            <button type="button">수정</button>
-            <button type="button">삭제</button>
+            <input type="text" placeholder="제목" value={title} onChange={e => setTitle(e.target.value)} />
+            <input type="text" placeholder="작성자" value={writer} onChange={e => setWriter(e.target.value)} />
+            <textarea placeholder="내용" value={content} onChange={e => setContent(e.target.value)}></textarea>
+            <button type="button" onClick={handleEdit}>수정</button>
+            <button type="button" onClick={handleDelete}>삭제</button>
           </form>
         </div>
       );
     }
 
-    // [부모] App: 공통 상태 + 공통 로직의 중심
+
+    // =========================================================
+    // [부모] App: 상태(state) + 서버통신(fetch)의 중심
+    //
+    // 상태(SoT)
+    // - noticeList: 목록 배열(가운데 렌더링)
+    // - notice: 선택된 글 1개(우측 상세/폼)
+    // =========================================================
     function App() {
       //서버로부터 가져온 목록데이터를 화면에 표시할 UI에 엮게될 바인딩 변수 선언
       const [noticeList, setNoticeList] = React.useState([]);
 
-
-      // [state] 단일 notice 상태(학습용 구조)
-      // - 게시판으로 확장 시 보통:
-      //   notices(배열), selectedNotice(선택된 글) 등을 추가하는 구조로 발전
       const [notice, setNotice] = React.useState({
         noticeId: "",
         title: "",
@@ -376,56 +475,124 @@
       ------------------*/
       React.useEffect(() => {
         fetch("http://localhost:9999/api/notices", { method: "GET" })
-          .then(res => res.json())//첫번째 then()서버에서 응답왔을때 수행됨(성공/실패모름). 만일 성공했다면 json문자열로 변경
-          .then(data => {//여기서의 then은 첫번째 then에서 반환된 promise가 resolve하면서 넘겨준 값 
+          .then(res => res.json())//응답을 JSON으로 파싱(비동기) → 다음 then으로 데이터 전달
+          .then(data => {
+            // 목록 state 갱신 → NoticeList가 다시 렌더링됨
             setNoticeList(data);
           })
           .catch(err => console.log(err));
       }, []);
 
+      /*------------------
+      등록 
+      ------------------*/
       // [등록] 자식(RegistForm)에서 전달한 notice를 서버에 POST
       function regist(notice) {
         // fetch(url, options)
         // - method: POST
         // - headers: JSON 전송 명시
-        // - body: 실제 데이터(JSON 문자열). 객체를 그대로 넣으면 안 되고 JSON.stringify 필요
+        // - body: 객체를 그대로 넣으면 안 되고 JSON.stringify 필요
         fetch("http://localhost:9999/api/notices", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(notice)
         })
-          // [then 1] Response → JSON 파싱(파싱도 비동기라 Promise 반환)
           .then(res => res.json())
-          // [then 2] 파싱된 JSON(서버 응답 데이터)을 실제로 사용하는 단계
-          // - 정석: 여기서 setNotice(...) 또는 목록 배열에 추가(setNotices(...)) 등 상태 갱신
           .then(saveNotice => {
-            console.log("savedNotice is", saveNotice)
+            console.log("savedNotice is", saveNotice);
+            // ✅ 보강(학습 포인트):
+            // - 실무에서는 여기서 setNoticeList 갱신(재조회 or append)해야 화면이 즉시 반영됩니다.
+            setNoticeList(prev => [ saveNotice, ...prev]); //오른쪽은 기존배열. 왼쪽은 새로운배열. 합친다 !
           })
-          // [에러 처리] 네트워크 오류/예외 처리
-          // - 실무에서는 res.ok 체크 + 에러 메시지 표준화도 함께 진행하는 편
           .catch(err => console.log(err));
       }
 
       /*------------------
       상세보기 
       ------------------*/
+      function selectOne(notice) {
+        // 리스트에서 클릭한 notice를 부모 state로 저장
+        // → DetailForm이 props.notice 변경을 감지(useEffect)하고 폼을 갱신
+        console.log("자식 컴포넌트로부터 전달된 notice는", notice);
+        setNotice(notice);
+      }
 
-      function selectOne(){
-        alert("부모인 App 메서드 호출 성공 ")
+      /*------------------
+      수정하기 
+      ------------------*/
+      function update(noticeId, payload) {
+        console.log("수정내용", payload);
+        console.log("노티스Id=", noticeId);
+
+        // fetch = 비동기. 제이쿼리 없이도 HTTP 통신 가능
+        fetch(`http://localhost:9999/api/notices/${noticeId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }).then(res => {
+          // ✅ 보강: res.ok로 2xx 성공 여부 확인(실무에서 자주 쓰는 패턴)
+          if (!res.ok) throw new Error("수정실패");
+          return res.json();
+        })
+          .then(updated => {
+            console.log("updated is", updated)
+            // - noticeList를 통째로 새로 만들기보다, "수정된 1건만" 불변성 유지하며 교체한다.
+            // - 배열 메서드(map 등)로 noticeId가 같은 요소만 updated로 치환 → React가 변경된 부분만 리렌더링.
+            // - Java의 컬렉션 갱신처럼 생각하되, JS에서는 배열 메서드(선언형/함수형 스타일)로 처리한다.
+
+            //아래의 prev 매개변수에는 기존 noticeList가 자동으로 react에 의해 전달됨
+            //이유 : noticeList에 대한 setter라 가능  
+            //map() 기존 배열 요소에 접근하여 새로운 배열 반환. 이때 값은 개발자가 결정.[반복문 일일이 관여X 어떤걸 채울지] 
+            setNoticeList(prev => prev.map(n => (n.noticeId === updated.noticeId) ? updated : n));
+          })
+          .catch(err => console.log(err));;
+      }
+
+      /*------------------
+      삭제하기 
+      ------------------*/
+      function deleteOne(noticeId) {
+
+        fetch(`http://localhost:9999/api/notices/${noticeId}`, { method: "DELETE" })
+          .then(res => {
+            if (!res.ok) throw new Error("삭제 싪패");
+            //삭제성공시 서버에서는 대부분 204 (No content) 그래서 삭제는 res.json()필요없음
+          })
+          .then(() => {
+            //서버로부터 응답데이터 없음. 목록갱신만 해라 
+            //필터로 배열 순회하면서 콜백이 true한 요소만 새로운 배열에 포함시키는 메서드 
+            //삭제안된애들만 골라서 새로운 배열에 넣어줌 
+            setNoticeList(prev => prev.filter(n => n.noticeId !== noticeId))
+
+            //선택글 초기화해야됨. DetailForm이 useEffect()로 부모 notice 감시하고 있으니 바인딩 데이터 제어해서 UI변경  
+            setNotice({
+              noticeId: "",
+              title: "",
+              writer: "",
+              content: "",
+              regdate: "",
+              hit: 0
+            });
+          })
+          .catch(err => {
+            console.log(err)
+          })
       }
 
       return (
         <div id="wrapper">
           <RegistForm bt="등록" onRegist={regist} />
           <NoticeList noticeList={noticeList} onSelectOne={selectOne} />
-          <DetailForm />
+          <DetailForm notice={notice} onUpdate={update} onDeleteOne={deleteOne} />
         </div>
       );
     }
 
+    // =========================================================
     // React 18 렌더링 시작
-    // 1) createRoot로 root 생성(React가 관리할 DOM 지정)
-    // 2) render로 최상위 컴포넌트를 화면에 마운트
+    // - createRoot: React가 관리할 root 생성
+    // - render: 최상위 컴포넌트(App)를 root에 마운트
+    // =========================================================
     const root = ReactDOM.createRoot(document.getElementById("app"));
     root.render(<App />);
   </script>

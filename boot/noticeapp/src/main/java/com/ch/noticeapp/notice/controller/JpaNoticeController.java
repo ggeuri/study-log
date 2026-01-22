@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/notices")
 @RequiredArgsConstructor
@@ -22,4 +24,23 @@ public class JpaNoticeController {
         ResponseNotice created = jpaNoticeService.regist(request);
         return ResponseEntity.ok(created); // (학습용 OK) 보통 생성은 201 Created도 자주 씀
     }
+
+    @GetMapping
+    public ResponseEntity<List<ResponseNotice>> getList(){
+        return ResponseEntity.ok(jpaNoticeService.getList());
+    }
+
+    @PutMapping("/{noticeId}")
+    public ResponseEntity<ResponseNotice> update(@PathVariable Long noticeId, @RequestBody RequestNotice request) {
+        return ResponseEntity.ok(jpaNoticeService.update(noticeId, request));
+    }
+
+    @DeleteMapping("/{noticeId}")
+    public ResponseEntity<Void> delete(@PathVariable Long noticeId){
+        jpaNoticeService.delete(noticeId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 }
