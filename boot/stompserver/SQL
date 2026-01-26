@@ -1,0 +1,8 @@
+use kiosk;
+
+CREATE TABLE MEMBER(
+member_id bigint PRIMARY KEY AUTO_INCREMENT
+, homepage_id varchar(20)
+, password varchar(64)
+, name varchar(20)
+);

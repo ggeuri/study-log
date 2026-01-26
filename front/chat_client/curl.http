@@ -1,0 +1,34 @@
+# 로그인 요청 
+
+POST http://localhost:9992/api/auth/login
+Content-Type: application/json
+
+{
+    "homepageId":"ggeuri",
+    "password":"1234",
+}
+
+#### Notice 삭제 
+
+DELETE http://localhost:9999/api/notices/2
+
+
+#### 한건 조회
+
+GET http://localhost:9999/api/notices/3
+Accept: application/json
+
+
+#### 목록 조회
+GET http://localhost:9999/api/notices
+Accept: application/json
+
+#### 한건 수정
+PUT http://localhost:9999/api/notices/1
+Content-Type: application/json
+
+{
+    "title":"수정용 제목",
+    "writer":"작성자수정",
+    "content":"내용수정"
+}

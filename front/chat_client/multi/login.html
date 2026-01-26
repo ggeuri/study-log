@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            background: #f6f7fb;
+            color: #111827;
+            font-family: system-ui, -apple-system, "Noto Sans KR", "Malgun Gothic", Segoe UI, Roboto, Arial, sans-serif;
+        }
+
+        .wrapper {
+            max-width: 460px;
+            margin: 0 auto;
+            padding: 40px 18px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 18px;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 24px rgba(17, 24, 39, 0.06);
+        }
+
+        .card h2 {
+            margin: 0 0 12px;
+            font-size: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #d9dbe3;
+            margin-top: 10px;
+            outline: none;
+            background: #fff;
+        }
+
+        input:focus {
+            border-color: #9ca3af;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 12px;
+            padding: 12px;
+            border: 0;
+            border-radius: 10px;
+            background: #111827;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.92;
+        }
+
+        .card>div {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+        function App() {
+            const [homepageId, setHomepageId] = React.useState("");
+            const [password, setPassword] = React.useState("");
+
+            function login() {
+                const payload = {
+                    homepageId: homepageId,
+                    password: password
+                };
+
+                fetch("http://localhost:9992/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials :"include",
+                    body: JSON.stringify(payload)
+                })
+                    .then(res => {
+                        if (!res.ok) throw Error;
+                        return res.json(); //서버에서 전송된 json을 객체리터럴ㄹ 변환&promise생성 및 resolve(res.json())
+                    })
+                    .then(data => {
+                        console.log("서버의 응답",data);
+                        if(data.ok){
+                            alert("로그인성공");
+                            location.href="main.html"
+                        }
+                    })
+                    .catch(err => console.log(err));
+            }
+
+
+            return (
+                <div className="wrapper">
+                    <div className="card">
+                        <h2>로그인</h2>
+                        <input type="text" placeholder="아이디" value={homepageId} onChange={e => setHomepageId(e.target.value)} />
+                        <input type="password" placeholder="비밀번호" value={password} onChange={e => setPassword(e.target.value)} />
+                        <button onClick={login}>로그인</button>
+
+                        <div>로그인 실패</div>
+                    </div>
+                </div>
+
+            )
+        }
+        const root = ReactDOM.createRoot(document.getElementById("app"));
+        root.render(<App />);
+
+
+    </script>
+</body>
+
+</html>

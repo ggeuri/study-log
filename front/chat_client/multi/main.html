@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>STOMP Room Chat (React CDN)</title>
+
+    <!-- React CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- SockJS + STOMP (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f6f7fb;
+            margin: 0;
+        }
+
+        .wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 18px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+            padding: 16px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .row>* {
+            margin: 4px 0;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #d9dbe3;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        button.primary {
+            background: #2e6cff;
+            color: white;
+        }
+
+        button.ghost {
+            background: #eef1ff;
+        }
+
+        .status {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .chatBox {
+            height: 420px;
+            overflow: auto;
+            background: #0b1020;
+            color: #e9ecff;
+            border-radius: 14px;
+            padding: 12px;
+        }
+
+        .msg {
+            padding: 10px;
+            border-radius: 12px;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .meta {
+            font-size: 12px;
+            opacity: 0.85;
+            margin-bottom: 4px;
+        }
+
+        .text {
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.14);
+            margin-left: 6px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+
+        function App() {
+            //[UI랑 관계O_바인드변수]
+            const [status, setStatus] = React.useState("DISCONNECTED"); //현재 앱 접속상태 출력위한 상태변수
+            const [roomId, setRoomId] = React.useState(""); // 사용자의 룸 변호와 엮일 상태변수 
+            const [message, setMessage] = React.useState(""); // 전송 메시지와 엮일 상태변수 
+            const [name, setName] = React.useState("");  //사용자명과 엮일 상태변수 
+            const [emoji, setEmoji] = React.useState("🔥"); // 이모지
+            const [messages, setMessages] = React.useState([]); // 메시지출력에 사용될 배열 상태변수 
+
+            //[UI랑 관계X_바인드변수_Ref]
+            const stompRef = React.useRef(null);
+            const subRef = React.useRef(null);
+            const chatBoxRef = React.useRef(null);
+
+            /*------------------------
+             컴포넌트가 화면에 그려질때 웹서버에서 사용자 정보 가져오기
+             부수효과 지원 메서드 useEffect()  
+             -------------------------*/
+            React.useEffect(() => {
+                fetch("http://localhost:9992/api/auth/me", {
+                    method: "GET",
+                    credentials: "include",//세션쿠키주고받으려면 추가해야하는 옵션. 누락되면 브라우저가 쿠키전송안함
+                })
+                    .then(res => {
+                        if (!res.ok) throw new Error("에러발생");
+                        return res.json(); //성공한 경우에 응답정보를 js객체 리터럴로 변환하여 전달
+                    })
+                    .then(data => {
+                        console.log("서버의 응답정보는 ", data);
+                        setName(data.name); //가져온거 꺼내기 
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            }, []);
+
+            /*-------------------------
+             접속 
+             -------------------------*/
+            const connect = () => {
+                //중복접속 방어 
+                if (stompRef.current && stompRef.current.connected) {
+                    return;
+                };
+
+                setStatus("CONNECTING...");
+                const sock = new SockJS("http://localhost:9992/ws/stomp"); //원래 실제 IP적는 곳(접속할곳=스프링부트 채팅서버/WebSocketStompConfig랑 연결)
+                const stomp = Stomp.over(sock); //스톰프는 단독불가. 웹소켓 위에서 실행됨. 이 시점부터 stomp를 사용하면 됨  
+
+                //STOMP를 이용한 서버접속시도 
+                stomp.connect({}, () => {
+                    setStatus("CONNECTED");
+                    stompRef.current = stomp; //current이용해서 담아야함. 
+                }, (err) => {
+                    console.log(err);
+                    setStatus("ERROR");
+                }); //매개변수가 총 세개임. 연결 시 보낼 STOMP 헤더(sock에서 해놔서 비워놔도된다), 성공콜백,실패콜백
+
+            }
+            /*-------------------------
+             방 입장(구독신청) 
+             subscribe()메서드 매개변수두개옴 
+             1. 구독주소 ex) /topic/room/roomId (우리는 WebSocketStompConfig에 있음)
+                참고)) 구독신청시 구독주소만 전송되는게 아니라 구독구분 id도 함께 전송됨 / 구독주소는 destination
+             2. 프레임 [구독 요청 시 사용되는 값 아니라, 구독 신청 후 서버에서 전송된 메시지 처리할 콜백함수]
+                따라서, 같은 방에 있는 사용자들의 메시지 수시로 받는 함수임.[메시지받는함수!]
+             -------------------------*/
+            const joinRoom = () => {
+                if (!stompRef.current || !stompRef.current.connected) {
+                    alert("접속좀");
+                    return;
+                }
+
+                if(subRef.current){
+                    subRef.current.unsubscribe();
+                    subRef.current=null;
+                }
+                
+                //룸번호 유효성체크 
+                const rid = roomId.trim();
+                if (!rid) {
+                    alert("roomId를 입력하세요");
+                    return;
+                }
+
+                subRef.current = stompRef.current.subscribe(`/topic/room/${rid}`, (frame) => {
+                    console.log("frame is ", frame);
+
+                    //실제 내용은 body에 json문자열로 들어옴 스프링에서 @ResponseBody했으니 body를 객체로 변환할 parse필요 
+                    const body = JSON.parse(frame.body);
+                    console.log("메시지내용은 ", body);
+
+                    //기존 messages배열에 body추가한 새로운 배열 반환 사용 
+                    setMessages(prev => [...prev, body]);
+
+                });
+
+            }
+            /*-------------------------
+             메시지 보내기  
+             send는 3개의 매개변수를 요구 
+            1: destination(/app/...)
+            2: headers(보통 {})
+            3: body(문자열만, 그래서 JSON.stringify)
+             -------------------------*/
+            //messages 변경될때마다 자동으로 스크롤처리 1.인수(동작할함수), 2.감시대상
+            React.useEffect(() => {
+                chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+            }, [messages]);
+
+            const send = () => {
+                //connect연결여부 확인
+                if (!stompRef.current || !stompRef.current.connected) {
+                    alert("메시지를 전송하려면, 먼저 접속을 해주세요");
+                    return;
+                }
+                if (!message) {
+                    return;
+                }
+
+                //서버가 ChatMessage객체로 파라미터 받으니 json으로 전송 
+                const payload = {
+                    name: name, //유저명 
+                    emoji: emoji, //셀렉트박스안에있는거 
+                    message: message //인풋박스에서  
+                }
+
+
+
+                stompRef.current.send(`/app/room/${roomId}/send`, {}, JSON.stringify(payload)); //Config랑 ChatController랑 연결 
+                setMessage(""); //입력초기화 
+
+            }
+
+            /*-------------------------
+             접속해제 
+             -------------------------*/
+            const disconnect = () => {
+                try {
+                    //기존 구독신청있다면 초기화 
+                    if (subRef.current && stompRef.current) {
+                        subRef.current.unsubscribe();
+                        subRef.current = null;
+                    }
+
+                    if (stompRef.current) {
+                        stompRef.current.disconnect(() => { });
+                        stompRef.current = null;
+                    }
+                } catch (e) {
+
+                } finally {
+                    // disconnect()호출에 의한 해제 실패란 
+                    // 사실상 1)이미 서버가 먼저 연결 끊음(서버다운) 2) 소켓이 half-open. 
+                    // 그래서 유저가 접속해제 시도하면 어떻든간 접속 유지 안됨 = 그냥 finally해도됨 
+                    setStatus("DISCONNECTED");
+                }
+
+            };
+
+            return (
+                <div className="wrap">
+                    <div className="card">
+                        <h2 style={{ margin: "0 0 10px 0" }}>Step2+3 - STOMP 채팅방(Room) (No Auth)</h2>
+
+                        <div className="row">
+                            <div className="status">
+                                <b>Status:</b> <span id="status">{status}</span>
+                                <span id="room-pill" className="pill" style={{ display: "none" }}>Room </span>
+                            </div>
+
+                            <div style={{ flex: 1 }}></div>
+
+                            <button className="ghost" id="btn-connect" onClick={connect}>Connect</button>
+                            <button className="ghost" id="btn-disconnect" onClick={disconnect}>Disconnect</button>
+                        </div>
+
+                        <hr style={{ border: 0, borderTop: "1px solid #eee", margin: "14px 0" }} />
+
+                        <div className="row">
+                            <input
+                                id="input-roomId"
+                                type="text"
+                                placeholder="roomId (예: 1,2,study)"
+                                value={roomId}
+                                onChange={e => setRoomId(e.target.value)}
+                            />
+                            <button className="primary" id="btn-join" onClick={joinRoom}>Join Room</button>
+
+                            <div style={{ flex: 1 }}></div>
+
+                            <input
+                                id="input-nickname"
+                                type="text"
+                                placeholder="닉네임"
+                                value={name}
+                                readOnly
+                            />
+                            <select id="select-emoji" value={emoji} onChange={e => setEmoji(e.target.value)}>
+                                <option value="🙂">🙂</option>
+                                <option value="😄">😄</option>
+                                <option value="😎">😎</option>
+                                <option value="🔥">🔥</option>
+                                <option value="🎉">🎉</option>
+                                <option value="✅">✅</option>
+                                <option value="⚠️">⚠️</option>
+                                <option value="❤️">❤️</option>
+                            </select>
+                        </div>
+
+                        <div style={{ marginTop: "14px" }} className="chatBox" id="chat-box" ref={chatBoxRef}>
+                            {messages.length === 0 ? (
+                                <div id="empty-message" style={{ opacity: 0.75 }}>
+                                    메시지가 없습니다. Join Room 후 메시지를 보내보세요.
+                                </div>
+                            ) : (
+                                messages.map((obj, idx) => (
+                                    <div className="msg" key={`${obj.time ?? "no-time"}-${idx}`}>
+                                        <div className="meta">
+                                            <b>{obj.emoji} {obj.name}</b>
+                                            <span style={{ marginLeft: 8 }}>{obj.time}</span>
+                                        </div>
+                                        <div className="text">{obj.message}</div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+
+                        <div className="row" style={{ marginTop: "12px" }}>
+                            <input
+                                id="input-message"
+                                style={{ flex: 1, minWidth: "260px" }}
+                                type="text"
+                                placeholder="메시지 입력"
+                                value={message}
+                                onChange={e => setMessage(e.target.value)}
+                                onKeyDown={e => {
+                                    if (e.key === "Enter") send();
+                                }}
+                            />
+                            <button className="primary" id="btn-send" onClick={send}>Send</button>
+                        </div>
+
+                        <div style={{ marginTop: "10px", fontSize: "12px", color: "#666" }}>
+                            WS 접속: <code>/ws/stomp</code> / 구독: <code>/topic/room/23</code> / 전송: <code>/app/room/23/send</code>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+
+        ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+
+    </script>
+</body>
+
+</html>
