@@ -1,0 +1,16 @@
+.primaryBtn{
+    padding : 11px 12px;
+    background : black;
+    border-radius:10px;
+    border:none;
+    color: #fff;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.inputStyle{
+    padding:11px 12px;
+    border-radius: 10px;
+    border:1px solid gray;
+    outline: none;
+}

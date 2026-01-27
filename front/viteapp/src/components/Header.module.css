@@ -1,0 +1,10 @@
+.headerStyle{
+    background:white;
+    border-bottom: 1px solid rgb(195, 195, 195);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: space-between;
+
+}
