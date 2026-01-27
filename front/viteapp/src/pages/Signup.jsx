@@ -2,7 +2,7 @@ import uiStyles from "../components/ui/Input.module.css";
 
 export default function Signup(){
     return(
-        <div style={{maxWidth:420, marin:"0 auto"}}>
+        <div style={{ maxWidth: 420, margin: "0 auto" }}>
             <div>
                 <h2>회원가입</h2>
                 <form action=""style ={{display:"flex", flexDirection:"column",gap:10}}>
